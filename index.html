@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="es" class="dark" style="color-scheme: dark;">
+<html lang="es" class="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sembrador | Estudio de Pensamiento Armónico</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -10,7 +10,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.1/dist/svg-pan-zoom.min.js"></script>
     <script>
         tailwind.config = { 
             darkMode: 'class', 
@@ -28,24 +27,28 @@
             } 
         }
         
-        // Se cambió background a oscuro sólido para evitar la inversión de Hermit
+        // Configuración de Mermaid con tema oscuro base y líneas ámbar/naranjas
         mermaid.initialize({ 
             startOnLoad: false, 
             theme: 'base', 
             themeVariables: {
                 darkMode: true,
-                background: '#0a0a0a', 
-                primaryColor: '#151515',       
-                primaryTextColor: '#e5e1da',   
-                primaryBorderColor: '#fbbf24', 
-                lineColor: '#a3a3a3',          
-                tertiaryColor: '#1a1a1a'       
+                background: 'transparent',
+                primaryColor: '#121212',
+                primaryTextColor: '#e5e1da',
+                primaryBorderColor: '#f59e0b',
+                lineColor: '#f59e0b',
+                textColor: '#e5e1da',
+                mainBkg: '#121212',
+                nodeBorder: '#f59e0b',
+                clusterBkg: '#0a0a0a',
+                clusterBorder: '#333333'
             },
             flowchart: { curve: 'basis' } 
         });
     </script>
     <style>
-        body { background-color: #121212; color: #d1d1d1; transition: background-color 0.5s ease; overflow-x: hidden; }
+        body { background-color: #121212; color: #d1d1d1; transition: all 0.5s ease; }
         .academic-border { border: 1px solid #1f1f1f; }
         
         .glow-soft-coral { box-shadow: 0 0 15px rgba(244, 63, 94, 0.2); }
@@ -60,14 +63,15 @@
         body.focus-active .extra-ui-footer { 
             opacity: 0; pointer-events: none; transform: translateX(-20px); 
         }
-        body.focus-active #sidebarOverlay { display: none !important; }
         
         .collapsible-content { 
             max-height: 2000px; 
             overflow: hidden; 
             transition: max-height 0.5s cubic-bezier(0, 1, 0, 1); 
         }
-        .collapsible-content.is-collapsed { max-height: 0; }
+        .collapsible-content.is-collapsed { 
+            max-height: 0; 
+        }
 
         .progress-container { 
             width: 100%; height: 4px; background: #0a0a0a; border-radius: 10px; overflow: visible; position: relative;
@@ -78,92 +82,81 @@
         
         [contenteditable="true"]:focus { outline: none; border-bottom: 1px solid #333; }
         
-        @media (max-width: 768px) {
-            .mobile-sidebar-open { transform: translateX(0) !important; }
+        .btn-moderno {
+            background: linear-gradient(145deg, #1a1a1a, #0d0d0d);
+            box-shadow: 2px 2px 5px #050505, -2px -2px 5px #1f1f1f;
+        }
+        .btn-moderno:hover:not(:disabled) {
+            background: linear-gradient(145deg, #222, #111);
+            border-color: rgba(245, 158, 11, 0.4);
+        }
+        .btn-moderno:disabled {
+            opacity: 0.5; cursor: not-allowed; box-shadow: none;
         }
     </style>
 </head>
-<body class="min-h-screen font-sans flex flex-col md:flex-row antialiased relative">
+<body class="min-h-screen font-sans flex flex-col md:flex-row antialiased">
 
-    <div id="sidebarOverlay" class="fixed inset-0 bg-black/80 z-40 hidden md:hidden backdrop-blur-sm transition-opacity" onclick="toggleSidebar()"></div>
-
-    <aside id="sidebar" class="fixed inset-y-0 left-0 w-4/5 md:w-[320px] h-screen border-r border-white/5 bg-[#0f0f0f] flex flex-col z-50 transform -translate-x-full md:translate-x-0 md:static transition-transform duration-300 ease-in-out shadow-2xl md:shadow-none">
-        <header class="p-6 md:p-8 flex justify-between items-center">
-            <div>
-                <h1 class="text-xs font-semibold tracking-[0.4em] text-crema uppercase">Sembrador</h1>
-                <p class="text-[9px] text-soft mt-2 uppercase tracking-widest italic opacity-60">Destilería de Ideas</p>
-            </div>
-            <button onclick="toggleSidebar()" class="md:hidden text-soft hover:text-crema p-2">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
+    <aside id="sidebar" class="w-full md:w-[320px] h-screen flex-shrink-0 border-r border-white/5 bg-[#0f0f0f] flex flex-col z-30 transition-all duration-700">
+        <header class="p-8">
+            <h1 class="text-xs font-semibold tracking-[0.4em] text-crema uppercase">Sembrador</h1>
+            <p class="text-[9px] text-soft mt-2 uppercase tracking-widest italic opacity-60">Destilería de Ideas</p>
         </header>
 
-        <nav class="flex border-y border-white/5 text-[9px] md:text-[8px] font-bold tracking-widest uppercase text-soft">
+        <nav class="flex border-y border-white/5 text-[8px] font-bold tracking-widest uppercase text-soft">
             <button onclick="cambiarFiltro('todos')" class="flex-1 py-4 hover:text-crema transition-colors">Todos</button>
             <button onclick="cambiarFiltro('semilla')" class="flex-1 py-4 hover:text-crema transition-colors">Semillas</button>
             <button onclick="cambiarFiltro('cosecha')" class="flex-1 py-4 hover:text-crema transition-colors">Cosecha</button>
         </nav>
 
-        <div id="historialLateral" class="flex-1 overflow-y-auto pt-4 pb-20 md:pb-4"></div>
+        <div id="historialLateral" class="flex-1 overflow-y-auto pt-4"></div>
     </aside>
 
-    <main class="flex-1 h-screen overflow-y-auto relative transition-all duration-700 w-full">
-        <header class="sticky top-0 z-20 bg-[#121212]/90 backdrop-blur-md p-4 md:p-6 flex justify-between items-center border-b border-white/5 md:border-transparent">
-            <div class="flex gap-4 md:gap-8 items-center">
-                <button onclick="toggleSidebar()" class="md:hidden text-soft hover:text-crema p-2 rounded-lg bg-white/5">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+    <main class="flex-1 h-screen overflow-y-auto relative transition-all duration-700">
+        <header class="sticky top-0 z-20 bg-[#121212]/90 backdrop-blur-md p-6 flex justify-between items-center">
+            <div class="flex gap-8 items-center">
+                <button onclick="toggleSidebar()" class="text-soft hover:text-crema">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"></path></svg>
                 </button>
-                <button onclick="toggleEnfoque()" id="btnEnfoque" class="text-[9px] md:text-[10px] tracking-widest uppercase font-semibold text-soft hover:text-amber-400 transition-all p-2">Modo Enfoque</button>
+                <button onclick="toggleEnfoque()" id="btnEnfoque" class="text-[10px] tracking-widest uppercase font-semibold text-soft hover:text-amber-400 transition-all">Modo Enfoque</button>
             </div>
-            <div class="nav-links flex gap-4 md:gap-6 items-center transition-all duration-500">
-                <button onclick="exportarDatos()" class="text-soft hover:text-crema text-[9px] font-bold uppercase tracking-widest hidden md:block">Backup</button>
-                <button onclick="document.getElementById('modalConfig').classList.remove('hidden')" class="text-soft hover:text-crema p-2 text-lg">⚙️</button>
+            <div class="nav-links flex gap-6 items-center transition-all duration-500">
+                <button onclick="exportarDatos()" class="text-soft hover:text-crema text-[9px] font-bold uppercase tracking-widest">Backup</button>
+                <button onclick="document.getElementById('modalConfig').classList.remove('hidden')" class="text-soft hover:text-crema">⚙️</button>
             </div>
         </header>
 
-        <div class="max-w-3xl mx-auto py-8 md:py-12 px-4 md:px-8 space-y-12 md:space-y-16">
-            
-            <section id="panelControl" class="academic-border p-5 md:p-8 bg-white/[0.02] rounded-xl transition-all duration-500">
+        <div class="max-w-2xl mx-auto py-12 px-6 space-y-16">
+            <section id="panelControl" class="academic-border p-8 bg-white/[0.02] rounded-lg transition-all duration-500">
                 <div class="flex justify-between items-center cursor-pointer" onclick="toggleElemento('controlBody', 'btnTogControl')">
-                    <h2 class="text-[10px] md:text-[9px] font-bold tracking-[0.3em] text-soft uppercase">Añadir al registro</h2>
-                    <button id="btnTogControl" class="text-soft hover:text-crema text-xl px-2">−</button>
+                    <h2 class="text-[9px] font-bold tracking-[0.3em] text-soft uppercase">Añadir al registro</h2>
+                    <button id="btnTogControl" class="text-soft hover:text-crema text-lg">−</button>
                 </div>
                 
-                <div id="controlBody" class="collapsible-content space-y-6 md:space-y-8 mt-6">
-                    <select id="ideaPadre" class="w-full bg-[#0a0a0a] border border-white/5 p-4 text-[12px] md:text-[11px] text-soft outline-none rounded-lg appearance-none cursor-pointer"></select>
+                <div id="controlBody" class="collapsible-content space-y-8 mt-6">
+                    <select id="ideaPadre" class="w-full bg-[#0a0a0a] border border-white/5 p-4 text-[11px] text-soft outline-none rounded-md appearance-none"></select>
+                    <textarea id="nuevoApunte" rows="3" class="w-full bg-transparent border-b border-white/10 p-2 text-crema focus:border-amber-500/50 outline-none resize-none font-serif text-lg transition-all" placeholder="Escribe un pensamiento libre..."></textarea>
                     
-                    <textarea id="nuevoApunte" rows="4" class="w-full bg-transparent border-b border-white/10 p-2 text-crema focus:border-amber-500/50 outline-none resize-none font-serif text-lg md:text-xl transition-all" placeholder="Escribe un pensamiento libre..."></textarea>
-                    
-                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 md:gap-0">
-                        <div class="flex gap-6 md:gap-8">
-                            <label class="text-[10px] md:text-[9px] font-bold text-soft flex items-center gap-2 cursor-pointer uppercase tracking-widest opacity-80 hover:opacity-100 transition-opacity">
-                                <input type="checkbox" id="checkIA" checked class="accent-amber-500 w-4 h-4" onchange="toggleMapCheck()"> Usar IA
-                            </label>
-                            <label id="lblMapa" class="text-[10px] md:text-[9px] font-bold text-soft flex items-center gap-2 cursor-pointer uppercase tracking-widest opacity-80 hover:opacity-100 transition-opacity">
-                                <input type="checkbox" id="checkMapa" checked class="accent-amber-500 w-4 h-4"> Mapa
-                            </label>
+                    <div class="flex justify-between items-center">
+                        <div class="flex gap-8">
+                            <label class="text-[9px] font-bold text-soft flex items-center gap-2 cursor-pointer uppercase tracking-widest opacity-70"><input type="checkbox" id="checkIA" checked class="accent-amber-500" onchange="toggleMapCheck()"> Usar IA</label>
+                            <label id="lblMapa" class="text-[9px] font-bold text-soft flex items-center gap-2 cursor-pointer uppercase tracking-widest opacity-70"><input type="checkbox" id="checkMapa" checked class="accent-amber-500"> Mapa</label>
                         </div>
-                        <button onclick="procesarPensamiento()" id="btnEjecutar" class="w-full md:w-auto px-8 py-4 md:py-3 bg-amber-500/10 text-amber-500 border border-amber-500/20 text-[10px] font-bold tracking-widest uppercase hover:bg-amber-500 hover:text-black transition-all rounded-lg md:rounded-full">Integrar</button>
+                        <button onclick="procesarPensamiento()" id="btnEjecutar" class="px-8 py-3 bg-amber-500/10 text-amber-500 border border-amber-500/20 text-[10px] font-bold tracking-widest uppercase hover:bg-amber-500 hover:text-black transition-all rounded-full">Integrar</button>
                     </div>
                 </div>
             </section>
 
-            <div id="visorActivo" class="space-y-16"></div>
+            <div id="visorActivo" class="space-y-20"></div>
         </div>
     </main>
 
-    <div id="modalConfig" class="hidden fixed inset-0 bg-black/90 z-[60] flex justify-center items-center p-4 backdrop-blur-sm">
-        <div class="bg-[#0f0f0f] border border-white/10 p-8 md:p-12 max-w-sm w-full space-y-8 rounded-2xl shadow-2xl">
-            <h2 class="text-[11px] md:text-[10px] font-bold tracking-[0.4em] uppercase text-crema border-b border-white/5 pb-4">Configuración</h2>
-            <div class="space-y-2">
-                <label class="text-[9px] text-soft uppercase tracking-widest">API Key (OpenRouter)</label>
-                <input type="password" id="apiKeyInput" class="w-full bg-[#0a0a0a] border border-white/10 p-4 text-xs text-crema outline-none rounded-lg focus:border-amber-500/50 transition-colors" placeholder="sk-or-v1-...">
-            </div>
-            <div class="flex gap-4">
-                <button onclick="guardarConfig()" class="flex-1 bg-crema text-black py-4 text-[10px] font-bold uppercase tracking-widest rounded-lg hover:bg-white transition-colors">Guardar</button>
-                <button onclick="document.getElementById('modalConfig').classList.add('hidden')" class="flex-1 text-soft bg-white/5 py-4 text-[10px] font-bold uppercase tracking-widest rounded-lg hover:bg-white/10 transition-colors">Cerrar</button>
-            </div>
-            <button onclick="exportarDatos()" class="w-full md:hidden mt-4 text-amber-500 text-[10px] font-bold uppercase tracking-widest border border-amber-500/20 py-3 rounded-lg">Exportar Backup (Móvil)</button>
+    <div id="modalConfig" class="hidden fixed inset-0 bg-black/90 z-50 flex justify-center items-center p-4">
+        <div class="bg-[#0f0f0f] border border-white/10 p-12 max-w-sm w-full space-y-8 rounded-xl">
+            <h2 class="text-[10px] font-bold tracking-[0.4em] uppercase text-crema border-b border-white/5 pb-4">Configuración</h2>
+            <input type="password" id="apiKeyInput" class="w-full bg-[#0a0a0a] border border-white/10 p-4 text-xs text-crema outline-none rounded-lg" placeholder="Clave API OpenRouter">
+            <button onclick="guardarConfig()" class="w-full bg-crema text-black py-4 text-[10px] font-bold uppercase tracking-widest rounded-lg">Guardar</button>
+            <button onclick="document.getElementById('modalConfig').classList.add('hidden')" class="w-full text-soft text-[9px] font-bold uppercase tracking-widest">Cerrar</button>
         </div>
     </div>
 
@@ -173,16 +166,10 @@
         let pensamientoActivoId = null; 
         let isTimerRunning = false;
         let filtroActual = 'todos';
-        let timeoutEdicion = null; 
         
         try { pensamientos = JSON.parse(localStorage.getItem('artesano_data')) || []; } catch(e) { pensamientos = []; }
         document.getElementById('apiKeyInput').value = API_KEY;
         renderizar();
-
-        function toggleSidebar() { 
-            document.getElementById('sidebar').classList.toggle('mobile-sidebar-open');
-            document.getElementById('sidebarOverlay').classList.toggle('hidden');
-        }
 
         function toggleEnfoque() {
             document.body.classList.toggle('focus-active');
@@ -196,27 +183,11 @@
             if (btn) btn.innerText = el.classList.contains('is-collapsed') ? "+" : "−";
         }
 
-        function cambiarFiltro(tipo) { 
-            filtroActual = tipo; 
-            renderizarLateral(); 
-            if(window.innerWidth < 768) toggleSidebar(); 
-        }
+        function cambiarFiltro(tipo) { filtroActual = tipo; renderizarLateral(); }
 
         function guardarTitulo(id, nuevoTitulo) {
             const p = pensamientos.find(x => x.id === id);
             if(p) { p.titulo = nuevoTitulo.trim(); localStorage.setItem('artesano_data', JSON.stringify(pensamientos)); renderizarLateral(); }
-        }
-
-        function autoGuardarEdicion(id, nuevoTexto) {
-            clearTimeout(timeoutEdicion);
-            timeoutEdicion = setTimeout(() => {
-                const p = pensamientos.find(x => x.id === id);
-                if(p && p.texto_fusionado !== nuevoTexto.trim()) {
-                    p.texto_fusionado = nuevoTexto.trim();
-                    localStorage.setItem('artesano_data', JSON.stringify(pensamientos));
-                    renderizarLateral(); 
-                }
-            }, 1000); 
         }
 
         function guardarEdicion(id, nuevoTexto) {
@@ -227,55 +198,25 @@
                 renderizarLateral();
             }
         }
-
-        function capturarSeleccion(id) {
-            const seleccion = window.getSelection().toString().trim();
-            if (seleccion) {
-                const inputEl = document.getElementById(`inputProfundizar-${id}`);
-                if (inputEl) {
-                    inputEl.value = `Analiza esto: "${seleccion}"`;
-                    inputEl.classList.add('border-amber-500', 'bg-amber-500/10');
-                    setTimeout(() => inputEl.classList.remove('border-amber-500', 'bg-amber-500/10'), 600);
-                }
-            }
+        
+        function actualizarContador(id, texto) {
+            const contador = document.getElementById(`contador-${id}`);
+            if(contador) contador.innerText = `${texto.length} caracteres`;
         }
 
         function guardarMadurez(id, valor) {
             const p = pensamientos.find(x => x.id === id);
-            if(p) { 
-                p.madurez = parseInt(valor); 
-                localStorage.setItem('artesano_data', JSON.stringify(pensamientos)); 
-                renderizarLateral(); 
-                document.getElementById(`madurez-text-${id}`).innerText = valor + '%';
-            }
+            if(p) { p.madurez = parseInt(valor); localStorage.setItem('artesano_data', JSON.stringify(pensamientos)); renderizarLateral(); }
         }
 
         function formatearTiempo(segundos) {
-            const m = Math.floor(segundos / 60), s = segundos % 60;
+            const h = Math.floor(segundos / 3600);
+            const m = Math.floor((segundos % 3600) / 60);
+            const s = segundos % 60;
+            if (h > 0) {
+                return `${h}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+            }
             return `${m}:${s.toString().padStart(2,'0')}`;
-        }
-
-        function eliminarPensamiento(id, event) {
-            event.stopPropagation();
-            if(confirm("¿Estás seguro de que deseas eliminar este apunte completo? Esta acción no se puede deshacer.")) {
-                pensamientos = pensamientos.filter(p => p.id !== id);
-                localStorage.setItem('artesano_data', JSON.stringify(pensamientos));
-                if(pensamientoActivoId === id) {
-                    pensamientoActivoId = pensamientos.length > 0 ? pensamientos[0].id : null;
-                }
-                renderizar();
-            }
-        }
-
-        function eliminarConsulta(idPensamiento, indexDialogo) {
-            if(confirm("¿Estás seguro de que deseas eliminar este análisis?")) {
-                const p = pensamientos.find(x => x.id === idPensamiento);
-                if(p && p.dialogos) {
-                    p.dialogos.splice(indexDialogo, 1);
-                    localStorage.setItem('artesano_data', JSON.stringify(pensamientos));
-                    renderizar();
-                }
-            }
         }
 
         setInterval(() => {
@@ -292,50 +233,27 @@
 
         async function procesarPensamiento() {
             const checkIA = document.getElementById('checkIA').checked;
-            const reqMapa = document.getElementById('checkMapa').checked && checkIA;
+            const checkMapa = document.getElementById('checkMapa').checked;
             if (checkIA && !API_KEY) { document.getElementById('modalConfig').classList.remove('hidden'); return; }
-            
-            const input = document.getElementById('nuevoApunte');
-            const select = document.getElementById('ideaPadre');
+            const input = document.getElementById('nuevoApunte'), select = document.getElementById('ideaPadre');
             const btn = document.getElementById('btnEjecutar');
-            const texto = input.value.trim(); 
-            if(!texto) return;
+            const texto = input.value.trim(); if(!texto) return;
 
-            btn.disabled = true; 
-            btn.innerText = "SINTETIZANDO...";
+            btn.disabled = true; btn.innerText = "SINTETIZANDO...";
 
             try {
                 let p_anterior = (select.value !== "nueva") ? pensamientos.find(x => x.id == select.value) : null;
                 let res = {};
 
                 if(checkIA) {
-                    const promptSystem = `Actúa como un editor técnico y sintetizador analítico. Tu ÚNICA tarea es fusionar la idea anterior con la nueva premisa de forma orgánica, mejorando la cohesión y usando terminología más exacta o técnica si es pertinente.
-REGLA DE ORO: ESTÁ ESTRICTAMENTE PROHIBIDO explayarte, dar contexto adicional, explicar o agregar argumentos que no estén en el texto original. Limítate a unir y refinar las ideas dadas, manteniendo la mayor brevedad posible.
-${reqMapa ? 'IMPORTANTE: Construye también un mapa conceptual en Mermaid (graph TD). REGLAS ESTRICTAS: 1. Usa nombres muy cortos. 2. PROHIBIDO usar caracteres especiales dentro de los nodos. 3. NO apliques estilos (style) a los nodos, solo la estructura.' : 'No generes mapa mermaid, deja el campo vacío.'}
-Devuelve ÚNICAMENTE un objeto JSON válido con este formato exacto:
-{"texto_fusionado": "tu texto...", "mapa_mermaid": "${reqMapa ? 'graph TD\\nA[Idea] --> B[Otra]' : ''}"}`;
-
-                    const promptUser = p_anterior ? `Pensamiento anterior: "${p_anterior.texto_fusionado}"\nNueva reflexión a integrar: "${texto}"` : `Reflexión inicial: "${texto}"`;
-                    
+                    const promptSystem = `Integra el pensamiento anterior con el nuevo en un texto académico profundo. Devuelve JSON: {"texto_fusionado": "..." ${checkMapa ? ', "mapa_mermaid": "..."' : ''}}`;
+                    const promptUser = p_anterior ? `Anterior: "${p_anterior.texto_fusionado}"\nNuevo: "${texto}"` : `Premisa: "${texto}"`;
                     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-                        method: 'POST', 
-                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` },
-                        body: JSON.stringify({ 
-                            model: 'google/gemini-2.0-flash-001', 
-                            messages: [
-                                {role: 'system', content: promptSystem}, 
-                                {role: 'user', content: promptUser}
-                            ], 
-                            response_format: { type: "json_object" }
-                        })
+                        method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` },
+                        body: JSON.stringify({ model: 'google/gemini-2.0-flash-001', messages: [{role: 'system', content: promptSystem}, {role: 'user', content: promptUser}], response_format: { type: "json_object" }})
                     });
-                    
                     const data = await response.json();
-                    let contenidoBruto = data.choices[0].message.content;
-                    
-                    contenidoBruto = contenidoBruto.replace(/```json/gi, '').replace(/```/g, '').trim();
-                    res = JSON.parse(contenidoBruto);
-                    
+                    res = JSON.parse(data.choices[0].message.content);
                 } else {
                     res = { texto_fusionado: p_anterior ? `${p_anterior.texto_fusionado}\n\n${texto}` : texto, mapa_mermaid: "" };
                 }
@@ -344,93 +262,65 @@ Devuelve ÚNICAMENTE un objeto JSON válido con este formato exacto:
                     id: Date.now(), ...res, 
                     madurez: p_anterior ? p_anterior.madurez : 0, 
                     tiempo_segundos: p_anterior ? p_anterior.tiempo_segundos : 0, 
-                    titulo: (p_anterior ? p_anterior.titulo : texto.substring(0,30) + '...'),
-                    dialogos: p_anterior && p_anterior.dialogos ? [...p_anterior.dialogos] : [] 
+                    titulo: (p_anterior ? p_anterior.titulo : texto.substring(0,30)) 
                 };
-
-                if (select.value === "nueva") {
-                    pensamientos.unshift(nuevoPensamiento);
-                } else { 
-                    const idx = pensamientos.findIndex(p => p.id == select.value); 
-                    pensamientos[idx] = { ...pensamientos[idx], ...nuevoPensamiento }; 
-                }
+                if (select.value === "nueva") pensamientos.unshift(nuevoPensamiento);
+                else { const idx = pensamientos.findIndex(p => p.id == select.value); pensamientos[idx] = { ...pensamientos[idx], ...nuevoPensamiento }; }
                 
-                input.value = ""; 
-                pensamientoActivoId = nuevoPensamiento.id; 
-                isTimerRunning = true; 
+                input.value = ""; pensamientoActivoId = nuevoPensamiento.id; isTimerRunning = true; 
                 localStorage.setItem('artesano_data', JSON.stringify(pensamientos));
                 renderizar();
-            } catch (e) { 
-                console.error(e);
-                alert("Ocurrió un error al procesar la idea. Verifica tu conexión o tu API Key."); 
-            } finally { 
-                btn.disabled = false; 
-                btn.innerText = "INTEGRAR"; 
-            }
+            } catch (e) { alert("Error de conexión"); } finally { btn.disabled = false; btn.innerText = "INTEGRAR"; }
         }
 
-        async function profundizarPensamiento(id) {
+        async function regenerarMapa(id) {
             if (!API_KEY) { document.getElementById('modalConfig').classList.remove('hidden'); return; }
-            
             const p = pensamientos.find(x => x.id === id);
-            const inputEl = document.getElementById(`inputProfundizar-${id}`);
-            const btnEl = document.getElementById(`btnProfundizar-${id}`);
-            const pregunta = inputEl.value.trim();
-            
-            if (!pregunta || !p) return;
+            if (!p) return;
 
-            btnEl.disabled = true;
-            btnEl.innerText = "ANALIZANDO...";
+            const btn = document.getElementById('btnRegenerarMapa');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = `<span class="animate-pulse">⏳ PROCESANDO...</span>`;
+            btn.disabled = true;
 
             try {
-                const promptSystem = `Actúa como un analista lógico y objetivo. Tu propósito es ayudar al usuario a profundizar en su reflexión analizando las implicaciones de lo que ha escrito y traducir técnicamente sus ideas cuando necesario para elevar su reflexión.
-Responde de manera sobria, realista, estructurada y fundamentada en hechos o lógica deductiva. Elimina por completo el lenguaje poético, las metáforas y las florituras literarias. Sé directo, racional y analítico.`;
-                const promptUser = `Manuscrito actual:\n"${p.texto_fusionado}"\n\nPregunta a responder o premisa a analizar: "${pregunta}"`;
-
+                const promptSystem = `Crea un mapa conceptual detallado en sintaxis Mermaid para el texto proporcionado. Devuelve estrictamente un JSON con este formato: {"mapa_mermaid": "graph TD\\n..."}`;
+                const promptUser = `Texto base: "${p.texto_fusionado}"`;
+                
                 const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-                    method: 'POST',
+                    method: 'POST', 
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` },
-                    body: JSON.stringify({
-                        model: 'google/gemini-2.0-flash-001',
-                        messages: [
-                            {role: 'system', content: promptSystem},
-                            {role: 'user', content: promptUser}
-                        ]
+                    body: JSON.stringify({ 
+                        model: 'google/gemini-2.0-flash-001', 
+                        messages: [{role: 'system', content: promptSystem}, {role: 'user', content: promptUser}], 
+                        response_format: { type: "json_object" }
                     })
                 });
-
-                const data = await response.json();
-                const respuesta = data.choices[0].message.content;
-
-                if (!p.dialogos) p.dialogos = [];
-                p.dialogos.unshift({ pregunta: pregunta, respuesta: respuesta });
                 
-                inputEl.value = ""; 
-                localStorage.setItem('artesano_data', JSON.stringify(pensamientos));
-                renderizar(); 
-            } catch (e) {
-                console.error(e);
-                alert("Error al intentar profundizar. Verifica tu conexión o tu API Key.");
-            } finally {
-                if(btnEl) {
-                    btnEl.disabled = false;
-                    btnEl.innerText = "CONSULTAR";
+                const data = await response.json();
+                const res = JSON.parse(data.choices[0].message.content);
+                
+                if (res.mapa_mermaid) {
+                    p.mapa_mermaid = res.mapa_mermaid;
+                    localStorage.setItem('artesano_data', JSON.stringify(pensamientos));
+                    renderizar();
                 }
+            } catch (e) { 
+                alert("Error al intentar regenerar el mapa conceptual."); 
+            } finally { 
+                if(btn) { btn.innerHTML = originalText; btn.disabled = false; }
             }
         }
 
         function renderizarLateral() {
             const sidebar = document.getElementById('historialLateral');
             const select = document.getElementById('ideaPadre');
-            sidebar.innerHTML = ""; 
-            select.innerHTML = '<option value="nueva">✦ Nueva línea de investigación</option>';
-            
+            sidebar.innerHTML = ""; select.innerHTML = '<option value="nueva">✦ Nueva línea de investigación</option>';
             const filtrados = pensamientos.filter(p => {
                 if (filtroActual === 'semilla') return (p.madurez || 0) <= 50;
                 if (filtroActual === 'cosecha') return (p.madurez || 0) > 50;
                 return true;
             });
-
             filtrados.forEach(p => {
                 const isActivo = p.id === pensamientoActivoId;
                 const mad = p.madurez || 0;
@@ -438,31 +328,10 @@ Responde de manera sobria, realista, estructurada y fundamentada en hechos o ló
                 if (mad <= 30) { colorClass = 'bg-coral-400'; glowClass = 'glow-soft-coral'; }
                 else if (mad <= 70) { colorClass = 'bg-amber-400'; glowClass = 'glow-soft-amber'; }
                 else { colorClass = 'bg-mint-400'; glowClass = 'glow-soft-mint'; }
-                
-                const opt = document.createElement('option'); 
-                opt.value = p.id; 
-                opt.textContent = "↳ " + (p.titulo || "Sin título"); 
-                select.appendChild(opt);
-                
+                const opt = document.createElement('option'); opt.value = p.id; opt.textContent = "↳ " + (p.titulo || "Sin título"); select.appendChild(opt);
                 const item = document.createElement('div');
-                item.className = `p-5 md:p-6 mb-2 cursor-pointer transition-all border-l-2 ${isActivo ? 'border-amber-500 bg-white/[0.03]' : 'border-transparent hover:bg-white/[0.01]'}`;
-                item.innerHTML = `
-                    <div class="mb-4" onclick="seleccionarPensamiento(${p.id})">
-                        <div class="flex justify-between items-start mb-2">
-                            <div contenteditable="true" onblur="guardarTitulo(${p.id}, this.innerText)" onclick="event.stopPropagation()" class="flex-1 text-[11px] md:text-[10px] font-bold uppercase tracking-widest ${isActivo ? 'text-crema' : 'text-soft'} outline-none break-all">${p.titulo || 'Untitled'}</div>
-                            <button onclick="eliminarPensamiento(${p.id}, event)" class="text-soft hover:text-coral-500 px-2 ml-2 transition-colors text-lg" title="Eliminar apunte completo">×</button>
-                        </div>
-                        <p class="text-[13px] md:text-[12px] font-serif ${isActivo ? 'text-soft' : 'text-soft/40'} line-clamp-2 italic leading-relaxed">${p.texto_fusionado}</p>
-                    </div>
-                    <div class="space-y-3">
-                        <div class="flex justify-between items-center text-[8px] md:text-[7px] font-bold text-soft/50 uppercase tracking-widest">
-                            <span>Maduración (${mad}%)</span>
-                            <span id="reloj-lateral-${p.id}">${formatearTiempo(p.tiempo_segundos || 0)}</span>
-                        </div>
-                        <div class="progress-container">
-                            <div class="h-full ${colorClass} ${glowClass} rounded-full transition-all duration-1000" style="width: ${mad}%"></div>
-                        </div>
-                    </div>`;
+                item.className = `p-6 mb-2 cursor-pointer transition-all border-l-2 ${isActivo ? 'border-amber-500 bg-white/[0.03]' : 'border-transparent hover:bg-white/[0.01]'}`;
+                item.innerHTML = `<div class="mb-4" onclick="seleccionarPensamiento(${p.id})"><div contenteditable="true" onblur="guardarTitulo(${p.id}, this.innerText)" onclick="event.stopPropagation()" class="text-[10px] font-bold uppercase tracking-widest ${isActivo ? 'text-crema' : 'text-soft'} mb-2 outline-none">${p.titulo || 'Untitled'}</div><p class="text-[12px] font-serif ${isActivo ? 'text-soft' : 'text-soft/40'} line-clamp-1 italic">${p.texto_fusionado}</p></div><div class="space-y-3"><div class="flex justify-between items-center text-[7px] font-bold text-soft/50 uppercase"><span>Maduración</span><span id="reloj-lateral-${p.id}">${formatearTiempo(p.tiempo_segundos || 0)}</span></div><div class="progress-container"><div class="h-full ${colorClass} ${glowClass} rounded-full transition-all duration-1000" style="width: ${mad}%"></div></div></div>`;
                 sidebar.appendChild(item);
             });
             if(pensamientoActivoId) select.value = pensamientoActivoId;
@@ -471,199 +340,111 @@ Responde de manera sobria, realista, estructurada y fundamentada en hechos o ló
         function renderizar() {
             renderizarLateral();
             const visor = document.getElementById('visorActivo');
-            if(pensamientos.length === 0) { 
-                visor.innerHTML = `<div class="text-center py-32 font-serif text-soft/30 italic text-lg">El archivo está vacío.<br>Comienza tu primer apunte arriba.</div>`; 
-                return; 
-            }
+            if(pensamientos.length === 0) { visor.innerHTML = `<div class="text-center py-32 font-serif text-soft/30 italic">El archivo está vacío. Comienza tu estudio.</div>`; return; }
             if(!pensamientoActivoId) pensamientoActivoId = pensamientos[0].id;
             const p = pensamientos.find(x => x.id === pensamientoActivoId);
             
             if(p) {
                 const hasMap = p.mapa_mermaid && p.mapa_mermaid.trim() !== "";
-                const hasDialogs = p.dialogos && p.dialogos.length > 0;
-                
-                let htmlDialogos = "";
-                if (hasDialogs) {
-                    htmlDialogos = `
-                    <div class="mt-8 border-t border-white/5 pt-6">
-                        <div class="flex justify-between items-center mb-6 cursor-pointer" onclick="toggleElemento('historialInner', 'btnTogHistorial')">
-                            <p class="text-[10px] md:text-[9px] font-bold tracking-widest text-soft/40 uppercase">Historial de Consultas (${p.dialogos.length})</p>
-                            <button id="btnTogHistorial" class="text-soft hover:text-crema text-xl px-2">−</button>
-                        </div>
-                        <div id="historialInner" class="collapsible-content">
-                            <div class="space-y-4 pb-2 pr-2 max-h-[500px] overflow-y-auto">
-                                ${p.dialogos.map((d, index) => `
-                                <div class="bg-[#151515] border border-white/10 rounded-xl shadow-lg overflow-hidden">
-                                    <div class="p-4 md:p-5 flex justify-between items-center cursor-pointer bg-white/[0.02] hover:bg-white/[0.04] transition-colors" onclick="toggleElemento('dialogoInner-${index}', 'btnTogDialogo-${index}')">
-                                        <div class="text-[9px] md:text-[8px] text-amber-500 font-bold uppercase tracking-widest pr-4 line-clamp-1">Consulta ${p.dialogos.length - index}: ${d.pregunta}</div>
-                                        <div class="flex items-center gap-4 text-soft">
-                                            <button onclick="event.stopPropagation(); eliminarConsulta(${p.id}, ${index})" class="hover:text-coral-500 text-lg px-2 transition-colors" title="Eliminar consulta">×</button>
-                                            <span id="btnTogDialogo-${index}" class="text-xl px-2 hover:text-crema transition-colors font-mono">−</span>
-                                        </div>
-                                    </div>
-                                    <div id="dialogoInner-${index}" class="collapsible-content">
-                                        <div class="p-4 md:p-5 pt-0 border-t border-white/5 mt-2">
-                                            <div class="font-serif text-crema text-sm md:text-base leading-relaxed whitespace-pre-wrap">${d.respuesta}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    </div>`;
-                }
-
-                // ESTRUCTURA DEL MAPA ACTUALIZADA PARA PERMITIR PAN Y ZOOM
                 visor.innerHTML = `
-                    <article class="space-y-10 md:space-y-12">
-                        <header class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 md:gap-0 border-b border-white/5 pb-6 md:pb-8">
-                            <div class="space-y-3">
-                                <h3 class="text-[10px] md:text-[9px] font-bold tracking-[0.4em] text-soft/60 uppercase">Manuscrito</h3>
-                                <div class="font-mono text-[11px] md:text-[10px] text-amber-500/80 flex items-center gap-4">
-                                    <span onclick="toggleTimer()" class="cursor-pointer p-1 -ml-1 hover:bg-amber-500/10 rounded transition-colors">
-                                        <span class="mr-2">${isTimerRunning ? '●' : '○'}</span> 
-                                        <span id="textoRelojActivo">${formatearTiempo(p.tiempo_segundos || 0)}</span>
+                    <article class="space-y-12">
+                        <header class="flex justify-between items-end border-b border-white/5 pb-8">
+                            <div class="space-y-2">
+                                <h3 class="text-[9px] font-bold tracking-[0.4em] text-soft/60 uppercase">Manuscrito</h3>
+                                <div class="font-mono text-[10px] text-amber-500/80 flex items-center gap-4">
+                                    <span id="contador-${p.id}" class="opacity-70">${(p.texto_fusionado || "").length} caracteres</span>
+                                    <span onclick="toggleTimer()" class="cursor-pointer border-l border-white/10 pl-4">
+                                        <span class="mr-2">${isTimerRunning ? '●' : '○'}</span> <span id="textoRelojActivo">${formatearTiempo(p.tiempo_segundos || 0)}</span>
                                     </span>
                                 </div>
                             </div>
-                            <div class="flex gap-2 w-full md:w-auto">
-                                <button onclick="descargarMD(${p.id})" class="flex-1 md:flex-none text-soft hover:text-crema text-[10px] md:text-[9px] font-bold uppercase tracking-widest border border-white/10 px-6 py-3 md:py-2 rounded-lg md:rounded-full hover:bg-white/5 transition-all text-center">Exportar MD</button>
-                                <button onclick="descargarPDF(${p.id})" class="flex-1 md:flex-none text-soft hover:text-crema text-[10px] md:text-[9px] font-bold uppercase tracking-widest border border-white/10 px-6 py-3 md:py-2 rounded-lg md:rounded-full hover:bg-white/5 transition-all text-center">Exportar PDF</button>
-                            </div>
+                            <button onclick="descargarPDF(${p.id})" class="text-soft hover:text-amber-400 text-[9px] font-bold uppercase tracking-widest border border-white/10 hover:border-amber-400/50 px-6 py-2 rounded-full transition-all flex items-center gap-2">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8l-8 8-8-8"></path></svg>
+                                Exportar PDF
+                            </button>
                         </header>
 
                         <div contenteditable="true" 
-                             oninput="autoGuardarEdicion(${p.id}, this.innerText)"
                              onblur="guardarEdicion(${p.id}, this.innerText)" 
-                             onmouseup="capturarSeleccion(${p.id})"
-                             class="font-serif text-crema text-lg md:text-2xl leading-relaxed md:leading-relaxed font-light outline-none whitespace-pre-wrap px-1">${p.texto_fusionado}</div>
+                             oninput="actualizarContador(${p.id}, this.innerText)"
+                             class="font-serif text-crema text-xl md:text-2xl leading-relaxed font-light outline-none whitespace-pre-wrap">
+                             ${p.texto_fusionado}
+                        </div>
 
-                        <section class="pt-6 extra-ui-footer">
-                            <div class="flex flex-col md:flex-row gap-4 items-end md:items-center p-4 bg-white/[0.02] rounded-xl border border-white/5">
-                                <div class="w-full flex-1">
-                                    <label class="text-[8px] font-bold tracking-widest text-soft/50 uppercase mb-2 block">Análisis Objetivo</label>
-                                    <input type="text" id="inputProfundizar-${p.id}" class="w-full bg-transparent border-b border-white/10 p-2 text-crema focus:border-amber-500/50 outline-none font-serif text-sm transition-all" placeholder="Ej: ¿Cuáles son las implicaciones prácticas de esto?">
-                                </div>
-                                <button onclick="profundizarPensamiento(${p.id})" id="btnProfundizar-${p.id}" class="w-full md:w-auto px-6 py-3 bg-white/5 text-soft hover:text-crema border border-white/10 text-[9px] font-bold tracking-widest uppercase hover:bg-white/10 transition-all rounded-lg">Consultar</button>
-                            </div>
-                            ${htmlDialogos}
-                        </section>
-
-                        <footer class="pt-8 md:pt-12 border-t border-white/5 extra-ui-footer">
-                            <div class="flex justify-between text-[10px] md:text-[9px] font-bold uppercase tracking-widest text-soft/40 mb-6">
+                        <footer class="pt-12 border-t border-white/5 extra-ui-footer">
+                            <div class="flex justify-between text-[9px] font-bold uppercase tracking-widest text-soft/40 mb-6">
                                 <span>Progreso de Maduración</span>
-                                <span id="madurez-text-${p.id}">${p.madurez || 0}%</span>
+                                <span>${p.madurez || 0}%</span>
                             </div>
-                            <input type="range" min="0" max="100" value="${p.madurez || 0}" class="w-full appearance-none bg-[#0a0a0a] h-2 md:h-1 rounded-full cursor-pointer slider-thumb" oninput="guardarMadurez(${p.id}, this.value)">
+                            <input type="range" min="0" max="100" value="${p.madurez || 0}" class="w-full appearance-none bg-[#0a0a0a] h-1 rounded-full cursor-pointer" onchange="guardarMadurez(${p.id}, this.value)">
                         </footer>
 
-                        ${hasMap ? `
-                        <section class="pt-8 md:pt-12 border-t border-white/5">
-                            <div class="flex justify-between items-center mb-6 md:mb-8 cursor-pointer" onclick="toggleElemento('mapaInner', 'btnTogMapa')">
-                                <p class="text-[10px] md:text-[9px] font-bold tracking-widest text-soft/40 uppercase">Estructura Relacional</p>
-                                <button id="btnTogMapa" class="text-soft hover:text-crema text-xl px-2">−</button>
-                            </div>
-                            <div id="mapaInner" class="collapsible-content">
-                                <div id="mapaContainer" class="bg-[#0a0a0a] rounded-xl border border-white/5 w-full h-[400px] relative overflow-hidden">
-                                    <pre class="mermaid-canvas w-full h-full flex items-center justify-center font-sans m-0 text-transparent">${p.mapa_mermaid}</pre>
+                        <section class="pt-12 border-t border-white/5">
+                            <div class="flex justify-between items-center mb-6">
+                                <div class="flex items-center gap-3 cursor-pointer group" onclick="toggleElemento('mapaInner', 'btnTogMapa')">
+                                    <span id="btnTogMapa" class="text-amber-500 font-bold text-lg group-hover:text-amber-400 transition-colors w-4 text-center">${hasMap ? '−' : '+'}</span>
+                                    <p class="text-[9px] font-bold tracking-[0.3em] text-soft group-hover:text-crema uppercase transition-colors">Estructura Relacional</p>
+                                </div>
+                                <div class="flex gap-3">
+                                    <button id="btnRegenerarMapa" onclick="regenerarMapa(${p.id})" class="btn-moderno flex items-center gap-2 px-4 py-2 border border-white/5 text-soft hover:text-amber-400 text-[8px] font-bold tracking-widest uppercase transition-all rounded-md">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                                        ${hasMap ? 'Regenerar Mapa' : 'Generar Mapa'}
+                                    </button>
                                 </div>
                             </div>
-                        </section>` : ''}
-                    </article>`;
-
-                if(hasMap) {
-                    setTimeout(async () => { 
-                        try { 
-                            await mermaid.run({ querySelector: '.mermaid-canvas' }); 
                             
-                            // INICIALIZACIÓN DE SVG-PAN-ZOOM
-                            const svgEl = document.querySelector('.mermaid-canvas svg');
-                            if(svgEl) {
-                                svgEl.style.width = '100%';
-                                svgEl.style.height = '100%';
-                                svgEl.style.backgroundColor = '#0a0a0a'; // Fuerza el color oscuro
-                                svgEl.style.color = '#e5e1da'; // Fuerza el color claro del texto
-                                
-                                svgPanZoom(svgEl, {
-                                    zoomEnabled: true,
-                                    controlIconsEnabled: true, // Añade botones + y - visuales
-                                    fit: true,
-                                    center: true,
-                                    minZoom: 0.5,
-                                    maxZoom: 5
-                                });
-                            }
-                        } catch (e) { console.warn("Aviso al renderizar mapa:", e); } 
-                    }, 100);
-                }
+                            <div id="mapaInner" class="collapsible-content ${hasMap ? '' : 'is-collapsed'}">
+                                <div id="mapaContainer" class="bg-gradient-to-b from-[#0a0a0a] to-[#121212] p-8 rounded-xl border border-white/5 shadow-lg shadow-black/50 min-h-[150px] flex items-center justify-center">
+                                    ${hasMap 
+                                        ? `<pre class="mermaid-canvas text-center w-full">${p.mapa_mermaid.replace(/\\n/g, '\n')}</pre>` 
+                                        : `<p class="text-[10px] text-soft/40 uppercase tracking-widest italic">Haz clic en "Generar Mapa" para crear la estructura.</p>`}
+                                </div>
+                            </div>
+                        </section>
+                    </article>`;
+                    
+                if(hasMap) setTimeout(() => { try { mermaid.init(undefined, document.querySelectorAll('.mermaid-canvas')); } catch (e) {} }, 100);
             }
         }
 
-        function seleccionarPensamiento(id) { 
-            pensamientoActivoId = id; 
-            renderizar(); 
-            if(window.innerWidth < 768) toggleSidebar(); 
-        }
-        
+        function seleccionarPensamiento(id) { pensamientoActivoId = id; renderizar(); }
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('hidden'); }
         function toggleTimer() { isTimerRunning = !isTimerRunning; renderizar(); }
-        
-        function guardarConfig() { 
-            API_KEY = document.getElementById('apiKeyInput').value.trim(); 
-            localStorage.setItem('artesano_key', API_KEY); 
-            document.getElementById('modalConfig').classList.add('hidden'); 
-        }
-        
-        function exportarDatos() { 
-            const blob = new Blob([JSON.stringify(pensamientos, null, 2)], { type: "application/json" }); 
-            const a = document.createElement('a'); 
-            a.href = URL.createObjectURL(blob); 
-            a.download = `Sembrador_Archive_${new Date().toISOString().split('T')[0]}.json`; 
-            a.click(); 
-        }
-
-        function descargarMD(id) {
-            const p = pensamientos.find(x => x.id == id);
-            if (!p) return;
-            
-            let mdContent = `# ${p.titulo || 'Fragmento'}\n\n`;
-            mdContent += `${p.texto_fusionado}\n\n`;
-            
-            if (p.mapa_mermaid && p.mapa_mermaid.trim() !== "") {
-                mdContent += `## Mapa Conceptual\n\`\`\`mermaid\n${p.mapa_mermaid}\n\`\`\`\n\n`;
-            }
-            
-            if (p.dialogos && p.dialogos.length > 0) {
-                mdContent += `## Historial de Análisis\n`;
-                p.dialogos.forEach((d, i) => {
-                    mdContent += `### Consulta ${p.dialogos.length - i}\n**Pregunta:** ${d.pregunta}\n\n**Respuesta:** ${d.respuesta}\n\n---\n\n`;
-                });
-            }
-            
-            const blob = new Blob([mdContent], { type: "text/markdown;charset=utf-8" });
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = `${p.titulo || 'Apunte'}.md`;
-            a.click();
-        }
+        function guardarConfig() { API_KEY = document.getElementById('apiKeyInput').value.trim(); localStorage.setItem('artesano_key', API_KEY); document.getElementById('modalConfig').classList.add('hidden'); }
+        function exportarDatos() { const blob = new Blob([JSON.stringify(pensamientos)], { type: "application/json" }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `Sembrador_Archive.json`; a.click(); }
         
         function descargarPDF(id) {
             const p = pensamientos.find(x => x.id == id);
             const element = document.createElement('div');
-            element.innerHTML = `<div style="padding: 40px; font-family: 'Lora', serif; color: #171717; background: #fff; max-width: 800px; margin: 0 auto;"><h1 style="text-transform: uppercase; font-size: 14px; border-bottom: 2px solid #f59e0b; padding-bottom: 10px; font-family: 'Inter', sans-serif; letter-spacing: 2px;">${p.titulo || 'Fragmento'}</h1><p style="font-size: 18px; line-height: 1.8; margin-top: 30px; white-space: pre-wrap;">${p.texto_fusionado}</p></div>`;
-            html2pdf().from(element).set({
-                margin: 10,
-                filename: `${p.titulo || 'Apunte'}.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2 },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            }).save();
+            
+            // Reemplazar saltos de línea por etiquetas <br> para asegurar la renderización
+            const textoConSaltos = p.texto_fusionado.replace(/\n/g, '<br>');
+
+            element.innerHTML = `
+                <div style="padding: 50px; font-family: 'Lora', serif; color: #171717; background: #fff; max-width: 800px; margin: 0 auto;">
+                    <h1 style="text-transform: uppercase; font-size: 16px; border-bottom: 2px solid #f59e0b; padding-bottom: 15px; margin-bottom: 30px; letter-spacing: 1px;">
+                        ${p.titulo || 'Manuscrito'}
+                    </h1>
+                    <div style="font-size: 16px; line-height: 1.8; text-align: justify;">
+                        ${textoConSaltos}
+                    </div>
+                </div>`;
+                
+            const opt = {
+                margin:       10,
+                filename:     `${(p.titulo || 'Documento').replace(/\s+/g, '_')}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            
+            html2pdf().set(opt).from(element).save();
         }
 
         function toggleMapCheck() {
             const checkIA = document.getElementById('checkIA').checked;
             document.getElementById('checkMapa').disabled = !checkIA;
             document.getElementById('lblMapa').style.opacity = checkIA ? '1' : '0.3';
-            if(!checkIA) document.getElementById('checkMapa').checked = false;
         }
     </script>
 </body>
