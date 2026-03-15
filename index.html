@@ -211,6 +211,8 @@
 
         function autoGuardarEdicion(id, nuevoTexto) {
             clearTimeout(timeoutEdicion);
+            const mainCounter = document.getElementById('charCountPrincipal');
+    if(mainCounter) mainCounter.textContent = nuevoTexto.length;
             timeoutEdicion = setTimeout(() => {
                 const p = pensamientos.find(x => x.id === id);
                 if(p && p.texto_fusionado !== nuevoTexto.trim()) {
@@ -523,12 +525,16 @@ Responde de manera sobria, realista, estructurada y fundamentada en hechos o ló
                         <header class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 md:gap-0 border-b border-white/5 pb-6 md:pb-8">
                             <div class="space-y-3">
                                 <h3 class="text-[10px] md:text-[9px] font-bold tracking-[0.4em] text-soft/60 uppercase">Manuscrito</h3>
-                                <div class="font-mono text-[11px] md:text-[10px] text-amber-500/80 flex items-center gap-4">
-                                    <span onclick="toggleTimer()" class="cursor-pointer p-1 -ml-1 hover:bg-amber-500/10 rounded transition-colors">
-                                        <span class="mr-2">${isTimerRunning ? '●' : '○'}</span> 
-                                        <span id="textoRelojActivo">${formatearTiempo(p.tiempo_segundos || 0)}</span>
-                                    </span>
-                                </div>
+                               <div class="font-mono text-[11px] md:text-[10px] text-amber-500/80 flex items-center gap-4">
+    <span onclick="toggleTimer()" class="cursor-pointer p-1 -ml-1 hover:bg-amber-500/10 rounded transition-colors">
+        <span class="mr-2">${isTimerRunning ? '●' : '○'}</span> 
+        <span id="textoRelojActivo">${formatearTiempo(p.tiempo_segundos || 0)}</span>
+    </span>
+    <span class="opacity-20 text-soft">|</span>
+    <span class="text-soft/60 uppercase tracking-widest text-[9px]">
+        <span id="charCountPrincipal">${p.texto_fusionado.length}</span> caract.
+    </span>
+</div>
                             </div>
                             <div class="flex gap-2 w-full md:w-auto">
                                 <button onclick="descargarMD(${p.id})" class="flex-1 md:flex-none text-soft hover:text-crema text-[10px] md:text-[9px] font-bold uppercase tracking-widest border border-white/10 px-6 py-3 md:py-2 rounded-lg md:rounded-full hover:bg-white/5 transition-all text-center">Exportar MD</button>
