@@ -63,6 +63,8 @@
         }
         body.focus-active header.main-header { border-bottom-color: transparent; }
         body.focus-active #sidebarOverlay { display: none !important; }
+        body.focus-active .visor-header { border-bottom-color: transparent; padding-bottom: 0; margin-bottom: 20px; }
+        body.focus-active .visor-header-title { display: none !important; }
         
         .collapsible-content { 
             max-height: 2000px; 
@@ -112,7 +114,7 @@
     </aside>
 
     <main class="flex-1 relative transition-all duration-700 w-full bg-[#121212] min-h-screen md:ml-0">
-        <header class="main-header sticky top-0 z-20 bg-[#121212]/90 backdrop-blur-md p-4 md:p-6 flex justify-between items-center border-b border-white/5">
+        <header class="main-header sticky top-0 z-20 bg-[#121212]/90 backdrop-blur-md p-4 md:p-6 flex justify-between items-center border-b border-white/5 transition-colors">
             <div class="flex gap-2 md:gap-4 items-center">
                 <button onclick="toggleSidebarMobile()" class="md:hidden text-soft hover:text-crema p-2 rounded bg-white/5 border border-white/5 hide-in-focus">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
@@ -162,7 +164,7 @@
                 </div>
             </section>
 
-            <div id="visorActivo" class="space-y-16 pb-20"></div>
+            <div id="visorActivo" class="space-y-16 pb-20 transition-all duration-300"></div>
         </div>
     </main>
 
@@ -378,11 +380,16 @@ ${reqMapa ? 'IMPORTANTE: Construye también un mapa conceptual en Mermaid (graph
 Devuelve ÚNICAMENTE un objeto JSON válido con este formato exacto:
 {"texto_fusionado": "tu texto...", "mapa_mermaid": "${reqMapa ? 'graph TD\\nA[Idea] --> B[Otra]' : ''}"}`;
 
-                    const promptUser = p_anterior ? `Manuscrito actual:\n"${p.texto_fusionado}"\n\nNueva reflexión a integrar:\n"${texto}"` : `Reflexión inicial: "${texto}"`;
+                    const promptUser = p_anterior ? `Manuscrito actual:\n"${p_anterior.texto_fusionado}"\n\nNueva reflexión a integrar:\n"${texto}"` : `Reflexión inicial: "${texto}"`;
                     
                     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
                         method: 'POST', 
-                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` },
+                        headers: { 
+                            'Content-Type': 'application/json', 
+                            'Authorization': `Bearer ${API_KEY}`,
+                            'HTTP-Referer': 'https://alucardvill.github.io',
+                            'X-Title': 'Sembrador'
+                        },
                         body: JSON.stringify({ 
                             model: 'google/gemini-2.0-flash-001', 
                             messages: [
@@ -392,6 +399,11 @@ Devuelve ÚNICAMENTE un objeto JSON válido con este formato exacto:
                             response_format: { type: "json_object" }
                         })
                     });
+
+                    if (!response.ok) {
+                        const errData = await response.json();
+                        throw new Error(errData.error?.message || `Error HTTP ${response.status}`);
+                    }
                     
                     const data = await response.json();
                     let contenidoBruto = data.choices[0].message.content;
@@ -426,7 +438,7 @@ Devuelve ÚNICAMENTE un objeto JSON válido con este formato exacto:
                 renderizar();
             } catch (e) { 
                 console.error(e);
-                alert("Ocurrió un error al procesar la idea. Verifica tu conexión o tu API Key."); 
+                alert(`Error al procesar: ${e.message}\n\nVerifica tus créditos de OpenRouter o tu conexión.`); 
             } finally { 
                 btn.disabled = false; 
                 btn.innerText = "INTEGRAR"; 
@@ -452,7 +464,12 @@ Devuelve ÚNICAMENTE el código de Mermaid crudo. Sin bloques de código markdow
 
                 const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
                     method: 'POST', 
-                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` },
+                    headers: { 
+                        'Content-Type': 'application/json', 
+                        'Authorization': `Bearer ${API_KEY}`,
+                        'HTTP-Referer': 'https://alucardvill.github.io',
+                        'X-Title': 'Sembrador'
+                    },
                     body: JSON.stringify({ 
                         model: 'google/gemini-2.0-flash-001', 
                         messages: [
@@ -461,6 +478,11 @@ Devuelve ÚNICAMENTE el código de Mermaid crudo. Sin bloques de código markdow
                         ]
                     })
                 });
+
+                if (!response.ok) {
+                    const errData = await response.json();
+                    throw new Error(errData.error?.message || `Error HTTP ${response.status}`);
+                }
                 
                 const data = await response.json();
                 let nuevoMapa = data.choices[0].message.content;
@@ -471,7 +493,7 @@ Devuelve ÚNICAMENTE el código de Mermaid crudo. Sin bloques de código markdow
                 renderizar();
             } catch (e) { 
                 console.error(e);
-                alert("Error al regenerar el mapa. Inténtalo de nuevo."); 
+                alert(`Error al regenerar mapa: ${e.message}`); 
             } finally { 
                 if(btn) {
                     btn.disabled = false; 
@@ -500,7 +522,12 @@ Responde de manera sobria, realista, estructurada y fundamentada en hechos o ló
 
                 const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` },
+                    headers: { 
+                        'Content-Type': 'application/json', 
+                        'Authorization': `Bearer ${API_KEY}`,
+                        'HTTP-Referer': 'https://alucardvill.github.io',
+                        'X-Title': 'Sembrador'
+                    },
                     body: JSON.stringify({
                         model: 'google/gemini-2.0-flash-001',
                         messages: [
@@ -509,6 +536,11 @@ Responde de manera sobria, realista, estructurada y fundamentada en hechos o ló
                         ]
                     })
                 });
+
+                if (!response.ok) {
+                    const errData = await response.json();
+                    throw new Error(errData.error?.message || `Error HTTP ${response.status}`);
+                }
 
                 const data = await response.json();
                 const respuesta = data.choices[0].message.content;
@@ -521,7 +553,7 @@ Responde de manera sobria, realista, estructurada y fundamentada en hechos o ló
                 renderizar(); 
             } catch (e) {
                 console.error(e);
-                alert("Error al intentar profundizar. Verifica tu conexión o tu API Key.");
+                alert(`Error al profundizar: ${e.message}`);
             } finally {
                 if(btnEl) {
                     btnEl.disabled = false;
@@ -599,7 +631,7 @@ Responde de manera sobria, realista, estructurada y fundamentada en hechos o ló
                     <div class="mt-6 border-t border-white/5 pt-6">
                         <div class="flex justify-between items-center mb-6 cursor-pointer" onclick="toggleElemento('historialInner', 'btnTogHistorial')">
                             <p class="text-[10px] md:text-[9px] font-bold tracking-widest text-soft/40 uppercase">Historial de Consultas (${p.dialogos.length})</p>
-                            <button id="btnTogHistorial" class="text-soft hover:text-crema text-xl px-2">−</button>
+                            <button id="btnTogHistorial" class="text-soft hover:text-crema text-xl px-2 transition-colors">−</button>
                         </div>
                         <div id="historialInner" class="collapsible-content">
                             <div class="space-y-4 pb-2 pr-2 max-h-[500px] overflow-y-auto">
@@ -626,9 +658,9 @@ Responde de manera sobria, realista, estructurada y fundamentada en hechos o ló
 
                 visor.innerHTML = `
                     <article class="space-y-10 md:space-y-12">
-                        <header class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 md:gap-0 border-b border-white/5 pb-6 md:pb-8">
+                        <header class="visor-header flex flex-col md:flex-row justify-between items-start md:items-end gap-6 md:gap-0 border-b border-white/5 pb-6 md:pb-8 transition-colors duration-300">
                             <div class="space-y-3">
-                                <h3 class="text-[10px] md:text-[9px] font-bold tracking-[0.4em] text-soft/60 uppercase">Manuscrito</h3>
+                                <h3 class="visor-header-title text-[10px] md:text-[9px] font-bold tracking-[0.4em] text-soft/60 uppercase">Manuscrito</h3>
                                 <div class="font-mono text-[11px] md:text-[10px] text-matrix-500/80 flex items-center gap-2">
                                     <span onclick="toggleTimer()" class="cursor-pointer p-1 hover:bg-matrix-500/10 rounded transition-colors text-lg" title="Pausar/Reanudar">
                                         ${isTimerRunning ? '●' : '○'}
@@ -663,10 +695,10 @@ Responde de manera sobria, realista, estructurada y fundamentada en hechos o ló
                              onmouseup="capturarSeleccion(${p.id})"
                              class="font-serif text-crema leading-relaxed font-light outline-none whitespace-pre-wrap px-1 text-justify">${p.texto_fusionado}</div>
 
-                        <section class="pt-8 mt-8 border-t border-white/5">
-                            <div class="flex justify-between items-center mb-6 cursor-pointer" onclick="toggleElemento('consultaInner', 'btnTogConsulta')">
-                                <p class="text-[10px] md:text-[9px] font-bold tracking-widest text-soft/40 uppercase">Análisis Objetivo</p>
-                                <button id="btnTogConsulta" class="text-soft hover:text-crema text-xl px-2">−</button>
+                        <section class="pt-8 mt-8 border-t border-white/5 transition-all duration-300">
+                            <div class="flex justify-between items-center mb-6 cursor-pointer group" onclick="toggleElemento('consultaInner', 'btnTogConsulta')">
+                                <p class="text-[10px] md:text-[9px] font-bold tracking-widest text-soft/40 uppercase group-hover:text-soft/80 transition-colors">Análisis Objetivo</p>
+                                <button id="btnTogConsulta" class="text-soft bg-white/5 group-hover:bg-white/10 group-hover:text-crema text-xl w-8 h-8 rounded-full flex items-center justify-center transition-all">−</button>
                             </div>
                             
                             <div id="consultaInner" class="collapsible-content">
@@ -689,12 +721,12 @@ Responde de manera sobria, realista, estructurada y fundamentada en hechos o ló
                         </footer>
 
                         <section class="pt-8 md:pt-12 border-t border-white/5 hide-in-focus">
-                            <div class="flex justify-between items-center mb-6 md:mb-8 cursor-pointer" onclick="toggleElemento('mapaInner', 'btnTogMapa')">
+                            <div class="flex justify-between items-center mb-6 md:mb-8 cursor-pointer group" onclick="toggleElemento('mapaInner', 'btnTogMapa')">
                                 <div class="flex items-center gap-4">
-                                    <p class="text-[10px] md:text-[9px] font-bold tracking-widest text-soft/40 uppercase">Estructura Relacional</p>
+                                    <p class="text-[10px] md:text-[9px] font-bold tracking-widest text-soft/40 uppercase group-hover:text-soft/80 transition-colors">Estructura Relacional</p>
                                     <button id="btnRegenerarMapa" onclick="event.stopPropagation(); regenerarMapaIndependiente(${p.id})" class="text-[8px] tracking-widest uppercase font-bold text-matrix-500 hover:text-white bg-matrix-500/10 px-3 py-1.5 rounded transition-colors border border-matrix-500/20">↻ Regenerar</button>
                                 </div>
-                                <button id="btnTogMapa" class="text-soft hover:text-crema text-xl px-2">−</button>
+                                <button id="btnTogMapa" class="text-soft bg-white/5 group-hover:bg-white/10 group-hover:text-crema text-xl w-8 h-8 rounded-full flex items-center justify-center transition-all">−</button>
                             </div>
                             <div id="mapaInner" class="collapsible-content">
                                 ${hasMap ? `
@@ -792,7 +824,6 @@ Responde de manera sobria, realista, estructurada y fundamentada en hechos o ló
             
             let sizeElegido = localStorage.getItem('artesano_fuente') || '20';
             
-            // Usamos white-space: pre-wrap para que html2pdf respete los párrafos originales sin romper el archivo
             element.innerHTML = `
                 <div style="padding: 20px; font-family: 'Lora', serif; color: #000000; background: #ffffff; line-height: 1.8; text-align: justify; font-size: ${sizeElegido}px;">
                     <h1 style="text-transform: uppercase; font-size: 14px; border-bottom: 2px solid #000000; padding-bottom: 10px; font-family: 'Inter', sans-serif; letter-spacing: 2px; margin-bottom: 30px; color: #000000;">
