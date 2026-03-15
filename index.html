@@ -55,10 +55,11 @@
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 10px; }
         
+        /* Efecto Modo Enfoque */
         body.focus-active #sidebar, 
         body.focus-active header .nav-links,
         body.focus-active .extra-ui-footer { 
-            opacity: 0; pointer-events: none; transform: translateX(-20px); 
+            opacity: 0; pointer-events: none; transform: translateX(-20px); transition: all 0.5s ease;
         }
         body.focus-active #sidebarOverlay { display: none !important; }
         
@@ -78,11 +79,10 @@
         
         [contenteditable="true"]:focus { outline: none; border-bottom: 1px solid #333; }
         
+        /* Ocultar sidebar en móvil y escritorio */
         @media (max-width: 768px) {
             .mobile-sidebar-open { transform: translateX(0) !important; }
         }
-        
-        /* Ocultar sidebar en escritorio */
         #sidebar { transition: margin 0.4s ease-in-out, transform 0.3s ease-in-out; }
         body.desktop-sidebar-collapsed #sidebar { margin-left: -320px; }
     </style>
@@ -112,19 +112,21 @@
     </aside>
 
     <main class="flex-1 h-screen overflow-y-auto relative transition-all duration-700 w-full bg-[#121212]">
-        <header class="sticky top-0 z-20 bg-[#121212]/90 backdrop-blur-md p-4 md:p-6 flex justify-between items-center border-b border-white/5 md:border-transparent">
-            <div class="flex gap-4 md:gap-6 items-center">
-                <button onclick="toggleSidebarMobile()" class="md:hidden text-soft hover:text-crema p-2 rounded-lg bg-white/5">
+        <header class="sticky top-0 z-20 bg-[#121212]/90 backdrop-blur-md p-4 md:p-6 flex justify-between items-center border-b border-white/5">
+            <div class="flex gap-2 md:gap-4 items-center">
+                <button onclick="toggleSidebarMobile()" class="md:hidden text-soft hover:text-crema p-2 rounded bg-white/5 border border-white/5">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                 </button>
-                <button onclick="toggleSidebarDesktop()" class="hidden md:flex items-center gap-2 text-soft hover:text-crema p-2 rounded-lg bg-white/5 transition-colors" title="Ocultar/Mostrar Panel">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
+                <button onclick="toggleSidebarDesktop()" class="hidden md:flex items-center gap-2 text-[10px] uppercase tracking-widest font-bold text-soft hover:text-crema p-2 px-4 rounded-lg bg-white/5 hover:bg-white/10 transition-colors border border-white/5" title="Ocultar/Mostrar Panel">
+                    ◫ Panel
                 </button>
-                <button onclick="toggleEnfoque()" id="btnEnfoque" class="text-[9px] md:text-[10px] tracking-widest uppercase font-semibold text-soft hover:text-amber-400 transition-all p-2">Modo Enfoque</button>
+                <button onclick="toggleEnfoque()" id="btnEnfoque" class="text-[10px] uppercase tracking-widest font-bold text-soft hover:text-amber-400 p-2 px-4 rounded-lg bg-white/5 hover:bg-white/10 transition-colors border border-white/5">
+                    ⌖ Enfoque
+                </button>
             </div>
             <div class="nav-links flex gap-4 md:gap-6 items-center transition-all duration-500">
                 <button onclick="exportarDatos()" class="text-soft hover:text-crema text-[9px] font-bold uppercase tracking-widest hidden md:block">Backup</button>
-                <button onclick="document.getElementById('modalConfig').classList.remove('hidden')" class="text-soft hover:text-crema p-2 text-lg">⚙️</button>
+                <button onclick="document.getElementById('modalConfig').classList.remove('hidden')" class="text-soft hover:text-crema p-2 text-lg hover:rotate-90 transition-transform">⚙️</button>
             </div>
         </header>
 
@@ -186,8 +188,11 @@
         let isTimerRunning = false;
         let filtroActual = 'todos';
         let timeoutEdicion = null; 
-        window.mapZoomInstance = null; // Variable global para el control del mapa
+        window.mapZoomInstance = null;
         
+        // Recuperar preferencias
+        let tamanoFuenteActual = localStorage.getItem('artesano_fuente') || '20';
+
         try { pensamientos = JSON.parse(localStorage.getItem('artesano_data')) || []; } catch(e) { pensamientos = []; }
         document.getElementById('apiKeyInput').value = API_KEY;
         renderizar();
@@ -203,7 +208,14 @@
 
         function toggleEnfoque() {
             document.body.classList.toggle('focus-active');
-            document.getElementById('btnEnfoque').innerText = document.body.classList.contains('focus-active') ? "Normal" : "Modo Enfoque";
+            const btn = document.getElementById('btnEnfoque');
+            if (document.body.classList.contains('focus-active')) {
+                btn.innerHTML = "◎ Normal";
+                btn.classList.add('text-amber-500');
+            } else {
+                btn.innerHTML = "⌖ Enfoque";
+                btn.classList.remove('text-amber-500');
+            }
         }
 
         function toggleElemento(targetId, btnId) {
@@ -217,6 +229,12 @@
             filtroActual = tipo; 
             renderizarLateral(); 
             if(window.innerWidth < 768) toggleSidebarMobile(); 
+        }
+
+        function cambiarFuente(size) {
+            tamanoFuenteActual = size;
+            localStorage.setItem('artesano_fuente', size);
+            document.getElementById('textoManuscrito').style.fontSize = `${size}px`;
         }
 
         function guardarTitulo(id, nuevoTitulo) {
@@ -271,7 +289,6 @@
             }
         }
 
-        // FORMATO DE TIEMPO ACTUALIZADO A hh:mm:ss SI PASA DE 60 MINUTOS
         function formatearTiempo(segundos) {
             const h = Math.floor(segundos / 3600);
             const m = Math.floor((segundos % 3600) / 60);
@@ -397,7 +414,6 @@ Devuelve ÚNICAMENTE un objeto JSON válido con este formato exacto:
             }
         }
 
-        // NUEVA FUNCIÓN: REGENERAR MAPA INDEPENDIENTE
         async function regenerarMapaIndependiente(id) {
             if (!API_KEY) { document.getElementById('modalConfig').classList.remove('hidden'); return; }
             const p = pensamientos.find(x => x.id === id);
@@ -528,7 +544,7 @@ Responde de manera sobria, realista, estructurada y fundamentada en hechos o ló
                             <div contenteditable="true" onblur="guardarTitulo(${p.id}, this.innerText)" onclick="event.stopPropagation()" class="flex-1 text-[11px] md:text-[10px] font-bold uppercase tracking-widest ${isActivo ? 'text-crema' : 'text-soft'} outline-none break-all">${p.titulo || 'Untitled'}</div>
                             <button onclick="eliminarPensamiento(${p.id}, event)" class="text-soft hover:text-coral-500 px-2 ml-2 transition-colors text-lg" title="Eliminar apunte completo">×</button>
                         </div>
-                        <p class="text-[13px] md:text-[12px] font-serif ${isActivo ? 'text-soft' : 'text-soft/40'} line-clamp-2 italic leading-relaxed">${p.texto_fusionado}</p>
+                        <p class="text-[13px] md:text-[12px] font-serif ${isActivo ? 'text-soft' : 'text-soft/40'} line-clamp-2 italic leading-relaxed text-justify">${p.texto_fusionado}</p>
                     </div>
                     <div class="space-y-3">
                         <div class="flex justify-between items-center text-[8px] md:text-[7px] font-bold text-soft/50 uppercase tracking-widest">
@@ -579,7 +595,7 @@ Responde de manera sobria, realista, estructurada y fundamentada en hechos o ló
                                     </div>
                                     <div id="dialogoInner-${index}" class="collapsible-content">
                                         <div class="p-4 md:p-5 pt-0 border-t border-white/5 mt-2">
-                                            <div class="font-serif text-crema text-sm md:text-base leading-relaxed whitespace-pre-wrap">${d.respuesta}</div>
+                                            <div class="font-serif text-crema text-sm md:text-base leading-relaxed whitespace-pre-wrap text-justify">${d.respuesta}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -605,17 +621,28 @@ Responde de manera sobria, realista, estructurada y fundamentada en hechos o ló
                                     </span>
                                 </div>
                             </div>
-                            <div class="flex gap-2 w-full md:w-auto">
-                                <button onclick="descargarMD(${p.id})" class="flex-1 md:flex-none text-soft hover:text-crema text-[10px] md:text-[9px] font-bold uppercase tracking-widest border border-white/10 px-6 py-3 md:py-2 rounded-lg md:rounded-full hover:bg-white/5 transition-all text-center">Exportar MD</button>
-                                <button onclick="descargarPDF(${p.id})" class="flex-1 md:flex-none text-soft hover:text-crema text-[10px] md:text-[9px] font-bold uppercase tracking-widest border border-white/10 px-6 py-3 md:py-2 rounded-lg md:rounded-full hover:bg-white/5 transition-all text-center">Exportar PDF</button>
+                            
+                            <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto items-center">
+                                <select onchange="cambiarFuente(this.value)" class="w-full sm:w-auto bg-[#151515] border border-white/10 text-soft text-[9px] uppercase tracking-widest px-3 py-3 md:py-2 rounded-lg outline-none cursor-pointer hover:text-crema hover:border-white/20 transition-all text-center">
+                                    <option value="16" ${tamanoFuenteActual == '16' ? 'selected' : ''}>A- Pequeña</option>
+                                    <option value="20" ${tamanoFuenteActual == '20' ? 'selected' : ''}>A Normal</option>
+                                    <option value="24" ${tamanoFuenteActual == '24' ? 'selected' : ''}>A+ Grande</option>
+                                    <option value="28" ${tamanoFuenteActual == '28' ? 'selected' : ''}>A++ Enorme</option>
+                                </select>
+                                
+                                <div class="flex gap-2 w-full sm:w-auto">
+                                    <button onclick="descargarMD(${p.id})" class="flex-1 md:flex-none text-soft hover:text-crema text-[10px] md:text-[9px] font-bold uppercase tracking-widest border border-white/10 px-4 py-3 md:py-2 rounded-lg md:rounded-full hover:bg-white/5 transition-all text-center">.MD</button>
+                                    <button onclick="descargarPDF(${p.id})" class="flex-1 md:flex-none text-soft hover:text-crema text-[10px] md:text-[9px] font-bold uppercase tracking-widest border border-white/10 px-4 py-3 md:py-2 rounded-lg md:rounded-full hover:bg-white/5 transition-all text-center">.PDF</button>
+                                </div>
                             </div>
                         </header>
 
-                        <div contenteditable="true" 
+                        <div id="textoManuscrito" contenteditable="true" 
+                             style="font-size: ${tamanoFuenteActual}px;"
                              oninput="autoGuardarEdicion(${p.id}, this.innerText)"
                              onblur="guardarEdicion(${p.id}, this.innerText)" 
                              onmouseup="capturarSeleccion(${p.id})"
-                             class="font-serif text-crema text-lg md:text-2xl leading-relaxed md:leading-relaxed font-light outline-none whitespace-pre-wrap px-1 text-justify">${p.texto_fusionado}</div>
+                             class="font-serif text-crema leading-relaxed font-light outline-none whitespace-pre-wrap px-1 text-justify">${p.texto_fusionado}</div>
 
                         <section class="pt-6 extra-ui-footer">
                             <div class="flex flex-col md:flex-row gap-4 items-end md:items-center p-4 bg-white/[0.02] rounded-xl border border-white/5">
@@ -665,7 +692,6 @@ Responde de manera sobria, realista, estructurada y fundamentada en hechos o ló
                         try { 
                             await mermaid.run({ querySelector: '.mermaid-canvas' }); 
                             
-                            // INICIALIZACIÓN DE SVG-PAN-ZOOM CON CONTROLES CUSTOM
                             const svgEl = document.querySelector('.mermaid-canvas svg');
                             if(svgEl) {
                                 svgEl.style.width = '100%';
@@ -675,7 +701,7 @@ Responde de manera sobria, realista, estructurada y fundamentada en hechos o ló
                                 
                                 window.mapZoomInstance = svgPanZoom(svgEl, {
                                     zoomEnabled: true,
-                                    controlIconsEnabled: false, // Ocultamos los grises feos
+                                    controlIconsEnabled: false,
                                     fit: true,
                                     center: true,
                                     minZoom: 0.5,
@@ -735,33 +761,33 @@ Responde de manera sobria, realista, estructurada y fundamentada en hechos o ló
             a.click();
         }
         
-        // EXPORTACIÓN A PDF MEJORADA (Márgenes, paginación y sin mapa conceptual)
         function descargarPDF(id) {
             const p = pensamientos.find(x => x.id == id);
             const element = document.createElement('div');
             
-            // Estructuramos el contenido sin el mapa para que sea un PDF de texto limpio
+            // Toma el tamaño de fuente elegido actualmente en el selector
+            let sizeElegido = localStorage.getItem('artesano_fuente') || '20';
+            
             element.innerHTML = `
                 <div style="padding: 20px; font-family: 'Lora', serif; color: #171717; background: #fff; line-height: 1.8;">
                     <h1 style="text-transform: uppercase; font-size: 14px; border-bottom: 2px solid #f59e0b; padding-bottom: 10px; font-family: 'Inter', sans-serif; letter-spacing: 2px; margin-bottom: 30px;">
                         ${p.titulo || 'Fragmento'}
                     </h1>
-                    <div style="font-size: 16px; white-space: pre-wrap; word-wrap: break-word; text-align: justify; page-break-inside: auto;">
+                    <div style="font-size: ${sizeElegido}px; white-space: pre-wrap; word-wrap: break-word; text-align: justify; page-break-inside: auto;">
                         ${p.texto_fusionado}
                     </div>
                 </div>`;
                 
             html2pdf().from(element).set({
-                margin: [15, 15, 15, 15], // Márgenes superior, izquierdo, inferior, derecho
+                margin: [15, 15, 15, 15],
                 filename: `${p.titulo || 'Apunte'}.pdf`,
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: { scale: 2, useCORS: true },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                pagebreak: { mode: ['avoid-all', 'css', 'legacy'] } // Evita cortes en mitad de los textos
+                pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
             }).save();
         }
 
-        // NUEVA FUNCIÓN: Descargar el mapa como vector SVG
         function descargarMapaSVG() {
             const svgEl = document.querySelector('.mermaid-canvas svg');
             if (!svgEl) return;
