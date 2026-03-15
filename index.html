@@ -20,7 +20,7 @@
                     colors: { 
                         softdark: '#121212',
                         paper: '#e5e1da',
-                        amber: { 400: '#fbbf24', 500: '#f59e0b' },
+                        matrix: { 400: '#00C833', 500: '#00FF41' }, /* El clásico verde Matrix */
                         mint: { 400: '#34d399', 500: '#10b981' },
                         coral: { 400: '#fb7185', 500: '#f43f5e' }
                     }
@@ -36,7 +36,7 @@
                 background: '#0a0a0a', 
                 primaryColor: '#151515',       
                 primaryTextColor: '#e5e1da',   
-                primaryBorderColor: '#fbbf24', 
+                primaryBorderColor: '#00FF41', /* Borde Matrix para el mapa */
                 lineColor: '#a3a3a3',          
                 tertiaryColor: '#1a1a1a'       
             },
@@ -45,17 +45,17 @@
         });
     </script>
     <style>
+        /* Eliminado overflow-y-hidden de aquí y del body para permitir scroll nativo en móviles */
         body { background-color: #121212; color: #d1d1d1; transition: background-color 0.5s ease; overflow-x: hidden; }
         .academic-border { border: 1px solid #1f1f1f; }
         
         .glow-soft-coral { box-shadow: 0 0 15px rgba(244, 63, 94, 0.2); }
-        .glow-soft-amber { box-shadow: 0 0 15px rgba(245, 158, 11, 0.2); }
+        .glow-soft-matrix { box-shadow: 0 0 15px rgba(0, 255, 65, 0.2); }
         .glow-soft-mint { box-shadow: 0 0 15px rgba(16, 185, 129, 0.2); }
 
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 10px; }
         
-        /* Efecto Modo Enfoque */
         body.focus-active #sidebar, 
         body.focus-active header .nav-links,
         body.focus-active .extra-ui-footer { 
@@ -79,7 +79,6 @@
         
         [contenteditable="true"]:focus { outline: none; border-bottom: 1px solid #333; }
         
-        /* Ocultar sidebar en móvil y escritorio */
         @media (max-width: 768px) {
             .mobile-sidebar-open { transform: translateX(0) !important; }
         }
@@ -87,7 +86,7 @@
         body.desktop-sidebar-collapsed #sidebar { margin-left: -320px; }
     </style>
 </head>
-<body class="min-h-screen font-sans flex flex-col md:flex-row antialiased relative overflow-hidden">
+<body class="min-h-screen font-sans flex flex-col md:flex-row antialiased relative">
 
     <div id="sidebarOverlay" class="fixed inset-0 bg-black/80 z-40 hidden md:hidden backdrop-blur-sm transition-opacity" onclick="toggleSidebarMobile()"></div>
 
@@ -111,7 +110,7 @@
         <div id="historialLateral" class="flex-1 overflow-y-auto pt-4 pb-20 md:pb-4"></div>
     </aside>
 
-    <main class="flex-1 h-screen overflow-y-auto relative transition-all duration-700 w-full bg-[#121212]">
+    <main class="flex-1 relative transition-all duration-700 w-full bg-[#121212] min-h-screen md:ml-0">
         <header class="sticky top-0 z-20 bg-[#121212]/90 backdrop-blur-md p-4 md:p-6 flex justify-between items-center border-b border-white/5">
             <div class="flex gap-2 md:gap-4 items-center">
                 <button onclick="toggleSidebarMobile()" class="md:hidden text-soft hover:text-crema p-2 rounded bg-white/5 border border-white/5">
@@ -120,7 +119,7 @@
                 <button onclick="toggleSidebarDesktop()" class="hidden md:flex items-center gap-2 text-[10px] uppercase tracking-widest font-bold text-soft hover:text-crema p-2 px-4 rounded-lg bg-white/5 hover:bg-white/10 transition-colors border border-white/5" title="Ocultar/Mostrar Panel">
                     ◫ Panel
                 </button>
-                <button onclick="toggleEnfoque()" id="btnEnfoque" class="text-[10px] uppercase tracking-widest font-bold text-soft hover:text-amber-400 p-2 px-4 rounded-lg bg-white/5 hover:bg-white/10 transition-colors border border-white/5">
+                <button onclick="toggleEnfoque()" id="btnEnfoque" class="text-[10px] uppercase tracking-widest font-bold text-soft hover:text-matrix-500 p-2 px-4 rounded-lg bg-white/5 hover:bg-white/10 transition-colors border border-white/5">
                     ⌖ Enfoque
                 </button>
             </div>
@@ -142,7 +141,7 @@
                     <select id="ideaPadre" class="w-full bg-[#0a0a0a] border border-white/5 p-4 text-[12px] md:text-[11px] text-soft outline-none rounded-lg appearance-none cursor-pointer"></select>
                     
                     <div>
-                        <textarea id="nuevoApunte" rows="4" class="w-full bg-transparent border-b border-white/10 p-2 text-crema focus:border-amber-500/50 outline-none resize-none font-serif text-lg md:text-xl transition-all" placeholder="Escribe un pensamiento libre..."></textarea>
+                        <textarea id="nuevoApunte" rows="4" class="w-full bg-transparent border-b border-white/10 p-2 text-crema focus:border-matrix-500/50 outline-none resize-none font-serif text-lg md:text-xl transition-all" placeholder="Escribe un pensamiento libre..."></textarea>
                         <div class="text-[10px] text-soft/50 text-right mt-1 font-mono uppercase tracking-widest">
                             Caracteres: <span id="charCount">0</span>
                         </div>
@@ -151,13 +150,13 @@
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 md:gap-0">
                         <div class="flex gap-6 md:gap-8">
                             <label class="text-[10px] md:text-[9px] font-bold text-soft flex items-center gap-2 cursor-pointer uppercase tracking-widest opacity-80 hover:opacity-100 transition-opacity">
-                                <input type="checkbox" id="checkIA" checked class="accent-amber-500 w-4 h-4" onchange="toggleMapCheck()"> Usar IA
+                                <input type="checkbox" id="checkIA" checked class="accent-matrix-500 w-4 h-4" onchange="toggleMapCheck()"> Usar IA
                             </label>
                             <label id="lblMapa" class="text-[10px] md:text-[9px] font-bold text-soft flex items-center gap-2 cursor-pointer uppercase tracking-widest opacity-80 hover:opacity-100 transition-opacity">
-                                <input type="checkbox" id="checkMapa" checked class="accent-amber-500 w-4 h-4"> Mapa
+                                <input type="checkbox" id="checkMapa" checked class="accent-matrix-500 w-4 h-4"> Mapa
                             </label>
                         </div>
-                        <button onclick="procesarPensamiento()" id="btnEjecutar" class="w-full md:w-auto px-8 py-4 md:py-3 bg-amber-500/10 text-amber-500 border border-amber-500/20 text-[10px] font-bold tracking-widest uppercase hover:bg-amber-500 hover:text-black transition-all rounded-lg md:rounded-full">Integrar</button>
+                        <button onclick="procesarPensamiento()" id="btnEjecutar" class="w-full md:w-auto px-8 py-4 md:py-3 bg-matrix-500/10 text-matrix-500 border border-matrix-500/20 text-[10px] font-bold tracking-widest uppercase hover:bg-matrix-500 hover:text-black transition-all rounded-lg md:rounded-full">Integrar</button>
                     </div>
                 </div>
             </section>
@@ -171,13 +170,13 @@
             <h2 class="text-[11px] md:text-[10px] font-bold tracking-[0.4em] uppercase text-crema border-b border-white/5 pb-4">Configuración</h2>
             <div class="space-y-2">
                 <label class="text-[9px] text-soft uppercase tracking-widest">API Key (OpenRouter)</label>
-                <input type="password" id="apiKeyInput" class="w-full bg-[#0a0a0a] border border-white/10 p-4 text-xs text-crema outline-none rounded-lg focus:border-amber-500/50 transition-colors" placeholder="sk-or-v1-...">
+                <input type="password" id="apiKeyInput" class="w-full bg-[#0a0a0a] border border-white/10 p-4 text-xs text-crema outline-none rounded-lg focus:border-matrix-500/50 transition-colors" placeholder="sk-or-v1-...">
             </div>
             <div class="flex gap-4">
                 <button onclick="guardarConfig()" class="flex-1 bg-crema text-black py-4 text-[10px] font-bold uppercase tracking-widest rounded-lg hover:bg-white transition-colors">Guardar</button>
                 <button onclick="document.getElementById('modalConfig').classList.add('hidden')" class="flex-1 text-soft bg-white/5 py-4 text-[10px] font-bold uppercase tracking-widest rounded-lg hover:bg-white/10 transition-colors">Cerrar</button>
             </div>
-            <button onclick="exportarDatos()" class="w-full md:hidden mt-4 text-amber-500 text-[10px] font-bold uppercase tracking-widest border border-amber-500/20 py-3 rounded-lg">Exportar Backup (Móvil)</button>
+            <button onclick="exportarDatos()" class="w-full md:hidden mt-4 text-matrix-500 text-[10px] font-bold uppercase tracking-widest border border-matrix-500/20 py-3 rounded-lg">Exportar Backup (Móvil)</button>
         </div>
     </div>
 
@@ -190,7 +189,6 @@
         let timeoutEdicion = null; 
         window.mapZoomInstance = null;
         
-        // Recuperar preferencias
         let tamanoFuenteActual = localStorage.getItem('artesano_fuente') || '20';
 
         try { pensamientos = JSON.parse(localStorage.getItem('artesano_data')) || []; } catch(e) { pensamientos = []; }
@@ -211,10 +209,10 @@
             const btn = document.getElementById('btnEnfoque');
             if (document.body.classList.contains('focus-active')) {
                 btn.innerHTML = "◎ Normal";
-                btn.classList.add('text-amber-500');
+                btn.classList.add('text-matrix-500');
             } else {
                 btn.innerHTML = "⌖ Enfoque";
-                btn.classList.remove('text-amber-500');
+                btn.classList.remove('text-matrix-500');
             }
         }
 
@@ -273,8 +271,8 @@
                 const inputEl = document.getElementById(`inputProfundizar-${id}`);
                 if (inputEl) {
                     inputEl.value = `Analiza esto: "${seleccion}"`;
-                    inputEl.classList.add('border-amber-500', 'bg-amber-500/10');
-                    setTimeout(() => inputEl.classList.remove('border-amber-500', 'bg-amber-500/10'), 600);
+                    inputEl.classList.add('border-matrix-500', 'bg-matrix-500/10');
+                    setTimeout(() => inputEl.classList.remove('border-matrix-500', 'bg-matrix-500/10'), 600);
                 }
             }
         }
@@ -528,7 +526,7 @@ Responde de manera sobria, realista, estructurada y fundamentada en hechos o ló
                 const mad = p.madurez || 0;
                 let colorClass, glowClass;
                 if (mad <= 30) { colorClass = 'bg-coral-400'; glowClass = 'glow-soft-coral'; }
-                else if (mad <= 70) { colorClass = 'bg-amber-400'; glowClass = 'glow-soft-amber'; }
+                else if (mad <= 70) { colorClass = 'bg-matrix-400'; glowClass = 'glow-soft-matrix'; }
                 else { colorClass = 'bg-mint-400'; glowClass = 'glow-soft-mint'; }
                 
                 const opt = document.createElement('option'); 
@@ -537,7 +535,7 @@ Responde de manera sobria, realista, estructurada y fundamentada en hechos o ló
                 select.appendChild(opt);
                 
                 const item = document.createElement('div');
-                item.className = `p-5 md:p-6 mb-2 cursor-pointer transition-all border-l-2 ${isActivo ? 'border-amber-500 bg-white/[0.03]' : 'border-transparent hover:bg-white/[0.01]'}`;
+                item.className = `p-5 md:p-6 mb-2 cursor-pointer transition-all border-l-2 ${isActivo ? 'border-matrix-500 bg-white/[0.03]' : 'border-transparent hover:bg-white/[0.01]'}`;
                 item.innerHTML = `
                     <div class="mb-4" onclick="seleccionarPensamiento(${p.id})">
                         <div class="flex justify-between items-start mb-2">
@@ -587,7 +585,7 @@ Responde de manera sobria, realista, estructurada y fundamentada en hechos o ló
                                 ${p.dialogos.map((d, index) => `
                                 <div class="bg-[#151515] border border-white/10 rounded-xl shadow-lg overflow-hidden">
                                     <div class="p-4 md:p-5 flex justify-between items-center cursor-pointer bg-white/[0.02] hover:bg-white/[0.04] transition-colors" onclick="toggleElemento('dialogoInner-${index}', 'btnTogDialogo-${index}')">
-                                        <div class="text-[9px] md:text-[8px] text-amber-500 font-bold uppercase tracking-widest pr-4 line-clamp-1">Consulta ${p.dialogos.length - index}: ${d.pregunta}</div>
+                                        <div class="text-[9px] md:text-[8px] text-matrix-500 font-bold uppercase tracking-widest pr-4 line-clamp-1">Consulta ${p.dialogos.length - index}: ${d.pregunta}</div>
                                         <div class="flex items-center gap-4 text-soft">
                                             <button onclick="event.stopPropagation(); eliminarConsulta(${p.id}, ${index})" class="hover:text-coral-500 text-lg px-2 transition-colors" title="Eliminar consulta">×</button>
                                             <span id="btnTogDialogo-${index}" class="text-xl px-2 hover:text-crema transition-colors font-mono">−</span>
@@ -610,8 +608,8 @@ Responde de manera sobria, realista, estructurada y fundamentada en hechos o ló
                         <header class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 md:gap-0 border-b border-white/5 pb-6 md:pb-8">
                             <div class="space-y-3">
                                 <h3 class="text-[10px] md:text-[9px] font-bold tracking-[0.4em] text-soft/60 uppercase">Manuscrito</h3>
-                                <div class="font-mono text-[11px] md:text-[10px] text-amber-500/80 flex items-center gap-4">
-                                    <span onclick="toggleTimer()" class="cursor-pointer p-1 -ml-1 hover:bg-amber-500/10 rounded transition-colors">
+                                <div class="font-mono text-[11px] md:text-[10px] text-matrix-500/80 flex items-center gap-4">
+                                    <span onclick="toggleTimer()" class="cursor-pointer p-1 -ml-1 hover:bg-matrix-500/10 rounded transition-colors">
                                         <span class="mr-2">${isTimerRunning ? '●' : '○'}</span> 
                                         <span id="textoRelojActivo">${formatearTiempo(p.tiempo_segundos || 0)}</span>
                                     </span>
@@ -648,7 +646,7 @@ Responde de manera sobria, realista, estructurada y fundamentada en hechos o ló
                             <div class="flex flex-col md:flex-row gap-4 items-end md:items-center p-4 bg-white/[0.02] rounded-xl border border-white/5">
                                 <div class="w-full flex-1">
                                     <label class="text-[8px] font-bold tracking-widest text-soft/50 uppercase mb-2 block">Análisis Objetivo</label>
-                                    <input type="text" id="inputProfundizar-${p.id}" class="w-full bg-transparent border-b border-white/10 p-2 text-crema focus:border-amber-500/50 outline-none font-serif text-sm transition-all" placeholder="Ej: ¿Cuáles son las implicaciones prácticas de esto?">
+                                    <input type="text" id="inputProfundizar-${p.id}" class="w-full bg-transparent border-b border-white/10 p-2 text-crema focus:border-matrix-500/50 outline-none font-serif text-sm transition-all" placeholder="Ej: ¿Cuáles son las implicaciones prácticas de esto?">
                                 </div>
                                 <button onclick="profundizarPensamiento(${p.id})" id="btnProfundizar-${p.id}" class="w-full md:w-auto px-6 py-3 bg-white/5 text-soft hover:text-crema border border-white/10 text-[9px] font-bold tracking-widest uppercase hover:bg-white/10 transition-all rounded-lg">Consultar</button>
                             </div>
@@ -667,7 +665,7 @@ Responde de manera sobria, realista, estructurada y fundamentada en hechos o ló
                             <div class="flex justify-between items-center mb-6 md:mb-8 cursor-pointer" onclick="toggleElemento('mapaInner', 'btnTogMapa')">
                                 <div class="flex items-center gap-4">
                                     <p class="text-[10px] md:text-[9px] font-bold tracking-widest text-soft/40 uppercase">Estructura Relacional</p>
-                                    <button id="btnRegenerarMapa" onclick="event.stopPropagation(); regenerarMapaIndependiente(${p.id})" class="text-[8px] tracking-widest uppercase font-bold text-amber-500 hover:text-white bg-amber-500/10 px-3 py-1.5 rounded transition-colors border border-amber-500/20">↻ Regenerar</button>
+                                    <button id="btnRegenerarMapa" onclick="event.stopPropagation(); regenerarMapaIndependiente(${p.id})" class="text-[8px] tracking-widest uppercase font-bold text-matrix-500 hover:text-white bg-matrix-500/10 px-3 py-1.5 rounded transition-colors border border-matrix-500/20">↻ Regenerar</button>
                                 </div>
                                 <button id="btnTogMapa" class="text-soft hover:text-crema text-xl px-2">−</button>
                             </div>
@@ -677,10 +675,10 @@ Responde de manera sobria, realista, estructurada y fundamentada en hechos o ló
                                     <pre class="mermaid-canvas w-full h-full flex items-center justify-center font-sans m-0 text-transparent">${p.mapa_mermaid}</pre>
                                     
                                     <div class="absolute bottom-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                        <button onclick="if(window.mapZoomInstance) window.mapZoomInstance.zoomIn()" class="bg-[#151515] text-soft hover:text-white px-3 py-2 rounded shadow-lg border border-white/10 hover:border-amber-500/50 transition-colors" title="Acercar">➕</button>
-                                        <button onclick="if(window.mapZoomInstance) window.mapZoomInstance.zoomOut()" class="bg-[#151515] text-soft hover:text-white px-3 py-2 rounded shadow-lg border border-white/10 hover:border-amber-500/50 transition-colors" title="Alejar">➖</button>
-                                        <button onclick="if(window.mapZoomInstance) { window.mapZoomInstance.resetZoom(); window.mapZoomInstance.center(); }" class="bg-[#151515] text-soft hover:text-white px-3 py-2 rounded shadow-lg border border-white/10 hover:border-amber-500/50 transition-colors font-bold" title="Centrar">⟲</button>
-                                        <button onclick="descargarMapaSVG()" class="bg-[#151515] text-soft hover:text-amber-500 px-4 py-2 rounded shadow-lg border border-white/10 hover:border-amber-500/50 transition-colors text-[9px] font-bold uppercase tracking-widest ml-2" title="Descargar como imagen">↓ SVG</button>
+                                        <button onclick="if(window.mapZoomInstance) window.mapZoomInstance.zoomIn()" class="bg-[#151515] text-soft hover:text-white px-3 py-2 rounded shadow-lg border border-white/10 hover:border-matrix-500/50 transition-colors" title="Acercar">➕</button>
+                                        <button onclick="if(window.mapZoomInstance) window.mapZoomInstance.zoomOut()" class="bg-[#151515] text-soft hover:text-white px-3 py-2 rounded shadow-lg border border-white/10 hover:border-matrix-500/50 transition-colors" title="Alejar">➖</button>
+                                        <button onclick="if(window.mapZoomInstance) { window.mapZoomInstance.resetZoom(); window.mapZoomInstance.center(); }" class="bg-[#151515] text-soft hover:text-white px-3 py-2 rounded shadow-lg border border-white/10 hover:border-matrix-500/50 transition-colors font-bold" title="Centrar">⟲</button>
+                                        <button onclick="descargarMapaSVG()" class="bg-[#151515] text-soft hover:text-matrix-500 px-4 py-2 rounded shadow-lg border border-white/10 hover:border-matrix-500/50 transition-colors text-[9px] font-bold uppercase tracking-widest ml-2" title="Descargar como imagen">↓ SVG</button>
                                     </div>
                                 </div>` : `<div class="p-8 text-center text-soft/30 border border-white/5 rounded-xl text-xs font-mono uppercase tracking-widest">No hay mapa generado. Pulsa "Regenerar".</div>`}
                             </div>
@@ -765,12 +763,11 @@ Responde de manera sobria, realista, estructurada y fundamentada en hechos o ló
             const p = pensamientos.find(x => x.id == id);
             const element = document.createElement('div');
             
-            // Toma el tamaño de fuente elegido actualmente en el selector
             let sizeElegido = localStorage.getItem('artesano_fuente') || '20';
             
             element.innerHTML = `
                 <div style="padding: 20px; font-family: 'Lora', serif; color: #171717; background: #fff; line-height: 1.8;">
-                    <h1 style="text-transform: uppercase; font-size: 14px; border-bottom: 2px solid #f59e0b; padding-bottom: 10px; font-family: 'Inter', sans-serif; letter-spacing: 2px; margin-bottom: 30px;">
+                    <h1 style="text-transform: uppercase; font-size: 14px; border-bottom: 2px solid #00FF41; padding-bottom: 10px; font-family: 'Inter', sans-serif; letter-spacing: 2px; margin-bottom: 30px;">
                         ${p.titulo || 'Fragmento'}
                     </h1>
                     <div style="font-size: ${sizeElegido}px; white-space: pre-wrap; word-wrap: break-word; text-align: justify; page-break-inside: auto;">
