@@ -159,7 +159,11 @@
                                 <input type="checkbox" id="checkMapa" checked class="accent-matrix-500 w-4 h-4"> Mapa
                             </label>
                         </div>
-                        <button onclick="procesarPensamiento()" id="btnEjecutar" class="w-full md:w-auto px-8 py-4 md:py-3 bg-matrix-500/10 text-matrix-500 border border-matrix-500/20 text-[10px] font-bold tracking-widest uppercase hover:bg-matrix-500 hover:text-black transition-all rounded-lg md:rounded-full">Integrar</button>
+                      <div class="flex gap-2 w-full md:w-auto">
+    <button onclick="intercambiarTextos()" id="btnIntercambio" class="px-4 py-4 md:py-3 bg-white/5 text-soft border border-white/10 text-lg hover:bg-white/10 hover:text-crema transition-all rounded-lg md:rounded-full" title="Intercambiar con el registro">⇄</button>
+    
+    <button onclick="procesarPensamiento()" id="btnEjecutar" class="flex-1 md:flex-none px-8 py-4 md:py-3 bg-matrix-500/10 text-matrix-500 border border-matrix-500/20 text-[10px] font-bold tracking-widest uppercase hover:bg-matrix-500 hover:text-black transition-all rounded-lg md:rounded-full">Integrar</button>
+</div>
                     </div>
                 </div>
             </section>
@@ -430,8 +434,8 @@ Devuelve ÚNICAMENTE un objeto JSON válido con este formato exacto:
                     pensamientos[idx] = { ...pensamientos[idx], ...nuevoPensamiento }; 
                 }
                 
-                input.value = ""; 
-                document.getElementById('charCount').textContent = "0";
+                //input.value = "" 
+              document.getElementById('charCount').textContent = input.value.length;
                 pensamientoActivoId = nuevoPensamiento.id; 
                 isTimerRunning = true; 
                 localStorage.setItem('artesano_data', JSON.stringify(pensamientos));
@@ -874,6 +878,37 @@ Responde de manera sobria, realista, estructurada y fundamentada en hechos o ló
         document.getElementById('nuevoApunte').addEventListener('input', function() {
             document.getElementById('charCount').textContent = this.value.length;
         });
+function intercambiarTextos() {
+    const input = document.getElementById('nuevoApunte');
+    if (!pensamientoActivoId) return;
+
+    // Buscamos el pensamiento actual en la lista
+    const idx = pensamientos.findIndex(p => p.id === pensamientoActivoId);
+    if (idx === -1) return;
+
+    // Guardamos los contenidos para el cambio
+    const textoRegistroIA = pensamientos[idx].texto_fusionado;
+    const textoTuyoInput = input.value;
+
+    // --- EL INTERCAMBIO ---
+    // Lo que escribiste tú va al registro principal
+    pensamientos[idx].texto_fusionado = textoTuyoInput;
+    
+    // Lo que generó la IA baja al recuadro para que lo edites
+    input.value = textoRegistroIA;
+
+    // Actualizamos el contador de letras del recuadro
+    document.getElementById('charCount').textContent = input.value.length;
+
+    // Guardamos en la memoria y redibujamos la pantalla
+    localStorage.setItem('artesano_data', JSON.stringify(pensamientos));
+    renderizar();
+    
+    // Un pequeño toque visual para confirmar el cambio
+    input.classList.add('bg-matrix-500/10');
+    setTimeout(() => input.classList.remove('bg-matrix-500/10'), 200);
+}
+        
     </script>
 </body>
 </html>
