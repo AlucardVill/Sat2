@@ -295,7 +295,6 @@
             return `${m}:${s.toString().padStart(2,'0')}`;
         }
         
-        // FUNCIÓN PARA EDITAR EL TIEMPO MANUALMENTE
         function actualizarTiempoManual(id, el) {
             const val = el.innerText.trim();
             const p = pensamientos.find(x => x.id === id);
@@ -344,7 +343,6 @@
                     p.tiempo_segundos = (p.tiempo_segundos || 0) + 1;
                     const tEl = document.getElementById('textoRelojActivo');
                     const lEl = document.getElementById(`reloj-lateral-${p.id}`);
-                    // Solo actualiza visualmente si el usuario no está editando el número
                     if (tEl && document.activeElement !== tEl) tEl.textContent = formatearTiempo(p.tiempo_segundos);
                     if (lEl) lEl.textContent = formatearTiempo(p.tiempo_segundos);
                 }
@@ -370,7 +368,6 @@
                 let res = {};
 
                 if(checkIA) {
-                    // INSTRUCCIONES ESTRICTAS PARA RESPETAR EL MANUSCRITO ORIGINAL
                     const promptSystem = `Actúa como un articulador de ideas y asistente de redacción. Tu tarea es anexar una "Nueva reflexión" a un "Manuscrito actual".
 REGLAS ESTRICTAS DE ORO:
 1. DEBES MANTENER ABSOLUTAMENTE INTACTA la estructura, el tono y todo el contenido del "Manuscrito actual". Bajo ninguna circunstancia borres, resumas o alteres el texto original.
@@ -599,7 +596,7 @@ Responde de manera sobria, realista, estructurada y fundamentada en hechos o ló
                 let htmlDialogos = "";
                 if (hasDialogs) {
                     htmlDialogos = `
-                    <div class="mt-8 border-t border-white/5 pt-6 focus-preserve">
+                    <div class="mt-6 border-t border-white/5 pt-6">
                         <div class="flex justify-between items-center mb-6 cursor-pointer" onclick="toggleElemento('historialInner', 'btnTogHistorial')">
                             <p class="text-[10px] md:text-[9px] font-bold tracking-widest text-soft/40 uppercase">Historial de Consultas (${p.dialogos.length})</p>
                             <button id="btnTogHistorial" class="text-soft hover:text-crema text-xl px-2">−</button>
@@ -666,15 +663,21 @@ Responde de manera sobria, realista, estructurada y fundamentada en hechos o ló
                              onmouseup="capturarSeleccion(${p.id})"
                              class="font-serif text-crema leading-relaxed font-light outline-none whitespace-pre-wrap px-1 text-justify">${p.texto_fusionado}</div>
 
-                        <section class="pt-6">
-                            <div class="flex flex-col md:flex-row gap-4 items-end md:items-center p-4 bg-white/[0.02] rounded-xl border border-white/5 hide-in-focus">
-                                <div class="w-full flex-1">
-                                    <label class="text-[8px] font-bold tracking-widest text-soft/50 uppercase mb-2 block">Análisis Objetivo</label>
-                                    <input type="text" id="inputProfundizar-${p.id}" class="w-full bg-transparent border-b border-white/10 p-2 text-crema focus:border-matrix-500/50 outline-none font-serif text-sm transition-all" placeholder="Ej: ¿Cuáles son las implicaciones prácticas de esto?">
-                                </div>
-                                <button onclick="profundizarPensamiento(${p.id})" id="btnProfundizar-${p.id}" class="w-full md:w-auto px-6 py-3 bg-white/5 text-soft hover:text-crema border border-white/10 text-[9px] font-bold tracking-widest uppercase hover:bg-white/10 transition-all rounded-lg">Consultar</button>
+                        <section class="pt-8 mt-8 border-t border-white/5">
+                            <div class="flex justify-between items-center mb-6 cursor-pointer" onclick="toggleElemento('consultaInner', 'btnTogConsulta')">
+                                <p class="text-[10px] md:text-[9px] font-bold tracking-widest text-soft/40 uppercase">Análisis Objetivo</p>
+                                <button id="btnTogConsulta" class="text-soft hover:text-crema text-xl px-2">−</button>
                             </div>
-                            ${htmlDialogos}
+                            
+                            <div id="consultaInner" class="collapsible-content">
+                                <div class="flex flex-col md:flex-row gap-4 items-end md:items-center p-4 bg-white/[0.02] rounded-xl border border-white/5">
+                                    <div class="w-full flex-1">
+                                        <input type="text" id="inputProfundizar-${p.id}" class="w-full bg-transparent border-b border-white/10 p-2 text-crema focus:border-matrix-500/50 outline-none font-serif text-sm transition-all" placeholder="Ej: ¿Cuáles son las implicaciones prácticas de esto?">
+                                    </div>
+                                    <button onclick="profundizarPensamiento(${p.id})" id="btnProfundizar-${p.id}" class="w-full md:w-auto px-6 py-3 bg-white/5 text-soft hover:text-crema border border-white/10 text-[9px] font-bold tracking-widest uppercase hover:bg-white/10 transition-all rounded-lg">Consultar</button>
+                                </div>
+                                ${htmlDialogos}
+                            </div>
                         </section>
 
                         <footer class="pt-8 md:pt-12 border-t border-white/5 hide-in-focus">
@@ -783,38 +786,27 @@ Responde de manera sobria, realista, estructurada y fundamentada en hechos o ló
             a.click();
         }
         
-        // SOLUCIÓN DEFINITIVA AL CORTE DEL PDF Y COLOR ESTRICTAMENTE NEGRO
         function descargarPDF(id) {
             const p = pensamientos.find(x => x.id == id);
             const element = document.createElement('div');
             
             let sizeElegido = localStorage.getItem('artesano_fuente') || '20';
             
-            // Dividimos el texto en etiquetas div para que el conversor PDF pueda hacer saltos de página bien
-            const parrafosHTML = p.texto_fusionado
-                                  .split('\n')
-                                  .map(linea => `<div style="margin-bottom: 12px; page-break-inside: auto;">${linea}</div>`)
-                                  .join('');
-            
-            // Forzamos colores puros #000000 para impresión
+            // Usamos white-space: pre-wrap para que html2pdf respete los párrafos originales sin romper el archivo
             element.innerHTML = `
-                <div style="padding: 20px; font-family: 'Lora', serif; color: #000000; background: #ffffff; line-height: 1.8;">
+                <div style="padding: 20px; font-family: 'Lora', serif; color: #000000; background: #ffffff; line-height: 1.8; text-align: justify; font-size: ${sizeElegido}px;">
                     <h1 style="text-transform: uppercase; font-size: 14px; border-bottom: 2px solid #000000; padding-bottom: 10px; font-family: 'Inter', sans-serif; letter-spacing: 2px; margin-bottom: 30px; color: #000000;">
                         ${p.titulo || 'Fragmento'}
                     </h1>
-                    <div style="font-size: ${sizeElegido}px; text-align: justify; color: #000000;">
-                        ${parrafosHTML}
-                    </div>
+                    <div style="white-space: pre-wrap; word-wrap: break-word; color: #000000;">${p.texto_fusionado}</div>
                 </div>`;
                 
             html2pdf().from(element).set({
                 margin: [15, 15, 15, 15],
                 filename: `${p.titulo || 'Apunte'}.pdf`,
                 image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                // Eliminamos el comando 'avoid-all' para permitir que el texto salte libremente a la siguiente hoja sin cortarse
-                pagebreak: { mode: 'css' }
+                html2canvas: { scale: 2, useCORS: true, letterRendering: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             }).save();
         }
 
