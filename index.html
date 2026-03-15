@@ -133,7 +133,9 @@
                     <select id="ideaPadre" class="w-full bg-[#0a0a0a] border border-white/5 p-4 text-[12px] md:text-[11px] text-soft outline-none rounded-lg appearance-none cursor-pointer"></select>
                     
                     <textarea id="nuevoApunte" rows="4" class="w-full bg-transparent border-b border-white/10 p-2 text-crema focus:border-amber-500/50 outline-none resize-none font-serif text-lg md:text-xl transition-all" placeholder="Escribe un pensamiento libre..."></textarea>
-                    
+<div class="text-[10px] text-soft/50 text-right mt-1 font-mono uppercase tracking-widest">
+    Caracteres: <span id="charCount">0</span>
+</div>                    
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 md:gap-0">
                         <div class="flex gap-6 md:gap-8">
                             <label class="text-[10px] md:text-[9px] font-bold text-soft flex items-center gap-2 cursor-pointer uppercase tracking-widest opacity-80 hover:opacity-100 transition-opacity">
@@ -356,7 +358,9 @@ Devuelve ÚNICAMENTE un objeto JSON válido con este formato exacto:
                 }
                 
                 input.value = ""; 
-                pensamientoActivoId = nuevoPensamiento.id; 
+                document.getElementById('charCount').textContent = "0";
+
+pensamientoActivoId = nuevoPensamiento.id;
                 isTimerRunning = true; 
                 localStorage.setItem('artesano_data', JSON.stringify(pensamientos));
                 renderizar();
@@ -665,6 +669,9 @@ Responde de manera sobria, realista, estructurada y fundamentada en hechos o ló
             document.getElementById('lblMapa').style.opacity = checkIA ? '1' : '0.3';
             if(!checkIA) document.getElementById('checkMapa').checked = false;
         }
+document.getElementById('nuevoApunte').addEventListener('input', function() {
+    document.getElementById('charCount').textContent = this.value.length;
+});
     </script>
 </body>
 </html>
