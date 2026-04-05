@@ -200,6 +200,18 @@
             }
         }
 
+        // --- NUEVA FUNCIÓN PARA ELIMINAR CONSULTAS DE IA ---
+        function eliminarDialogo(idManuscrito, indexDialogo) {
+            if(confirm('¿Eliminar esta consulta del análisis?')) {
+                const p = pensamientos.find(x => x.id === idManuscrito);
+                if(p && p.dialogos) {
+                    p.dialogos.splice(indexDialogo, 1);
+                    safeSet('artesano_data', pensamientos);
+                    renderizar();
+                }
+            }
+        }
+
         setInterval(() => {
             if (isTimerRunning && pensamientoActivoId) {
                 const p = pensamientos.find(x => x.id === pensamientoActivoId);
@@ -303,8 +315,13 @@
                                 ${(p.dialogos || []).map((d, index) => `
                                     <details class="group bg-[#151515] border border-white/10 rounded-xl overflow-hidden" ${index === 0 ? 'open' : ''}>
                                         <summary class="p-5 cursor-pointer flex justify-between items-center outline-none">
-                                            <p class="text-[10px] text-matrix-500 font-bold uppercase pr-4 line-clamp-2">${d.pregunta}</p>
-                                            <span class="text-[#a3a3a3] text-xs transition-transform duration-300 group-open:rotate-180">▼</span>
+                                            <div class="flex-1 pr-4">
+                                                <p class="text-[10px] text-matrix-500 font-bold uppercase line-clamp-2">${d.pregunta}</p>
+                                            </div>
+                                            <div class="flex items-center gap-4 flex-shrink-0">
+                                                <button onclick="event.stopPropagation(); eliminarDialogo(${p.id}, ${index})" class="text-[#a3a3a3]/40 hover:text-m-red transition-colors text-lg leading-none" title="Eliminar consulta">×</button>
+                                                <span class="text-[#a3a3a3] text-xs transition-transform duration-300 group-open:rotate-180">▼</span>
+                                            </div>
                                         </summary>
                                         <div class="p-5 pt-0">
                                             <div class="border-t border-white/5 pt-4 text-sm font-serif text-[#e5e1da] leading-relaxed text-justify whitespace-pre-wrap">${d.respuesta}</div>
