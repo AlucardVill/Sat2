@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sembrador | Estudio de Pensamiento Armónico</title>
+    <title>Sembrador | Escritura Primero</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;600&family=Lora:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
@@ -21,324 +21,172 @@
                         softdark: '#121212',
                         paper: '#e5e1da',
                         matrix: { 400: '#00C833', 500: '#00FF41' },
-                        mint: { 400: '#34d399', 500: '#10b981' },
-                        coral: { 400: '#fb7185', 500: '#f43f5e' }
+                        /* Nueva Paleta de Maduración Refinada */
+                        'm-red': '#f43f5e',   /* Rosa Coral (En bruto) */
+                        'm-amber': '#f59e0b', /* Ámbar (Incubando) */
+                        'm-green': '#10b981'  /* Verde Esmeralda (Destilada) */
                     }
                 } 
             } 
         }
-        
-        mermaid.initialize({ 
-            startOnLoad: false, 
-            theme: 'base', 
-            themeVariables: {
-                darkMode: true,
-                background: '#0a0a0a', 
-                primaryColor: '#151515',       
-                primaryTextColor: '#e5e1da',   
-                primaryBorderColor: '#00FF41', 
-                lineColor: '#a3a3a3',          
-                tertiaryColor: '#1a1a1a'       
-            },
-            flowchart: { curve: 'basis' },
-            securityLevel: 'loose'
-        });
+        /* Mapa configurado con el nuevo verde esmeralda */
+        mermaid.initialize({ startOnLoad: false, theme: 'base', themeVariables: { darkMode: true, background: '#0a0a0a', primaryColor: '#151515', primaryTextColor: '#e5e1da', primaryBorderColor: '#10b981', lineColor: '#a3a3a3' }, flowchart: { curve: 'basis' }, securityLevel: 'loose' });
     </script>
     <style>
         body { background-color: #121212; color: #d1d1d1; transition: background-color 0.5s ease; overflow-x: hidden; }
-        .academic-border { border: 1px solid #1f1f1f; }
         
-        .glow-soft-coral { box-shadow: 0 0 15px rgba(244, 63, 94, 0.2); }
-        .glow-soft-matrix { box-shadow: 0 0 15px rgba(0, 255, 65, 0.2); }
-        .glow-soft-mint { box-shadow: 0 0 15px rgba(16, 185, 129, 0.2); }
+        /* Nuevos brillos ajustados a la paleta */
+        .glow-red { box-shadow: 0 0 15px rgba(244, 63, 94, 0.3); }
+        .glow-amber { box-shadow: 0 0 15px rgba(245, 158, 11, 0.3); }
+        .glow-green { box-shadow: 0 0 15px rgba(16, 185, 129, 0.3); }
+        .glow-soft-matrix { box-shadow: 0 0 15px rgba(0, 255, 65, 0.15); }
 
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 10px; }
         
-        /* MODO ENFOQUE: Ocultar distracciones */
-        body.focus-active #sidebar, 
-        body.focus-active .nav-links,
-        body.focus-active .hide-in-focus { 
-            display: none !important; 
-        }
-        body.focus-active header.main-header { border-bottom-color: transparent; }
-        body.focus-active #sidebarOverlay { display: none !important; }
-        body.focus-active .visor-header { border-bottom-color: transparent; padding-bottom: 0; margin-bottom: 20px; }
-        body.focus-active .visor-header-title { display: none !important; }
-        
-        .collapsible-content { 
-            max-height: 2000px; 
-            overflow: hidden; 
-            transition: max-height 0.5s cubic-bezier(0, 1, 0, 1); 
-        }
+        .collapsible-content { max-height: 2000px; overflow: hidden; transition: max-height 0.5s cubic-bezier(0, 1, 0, 1); }
         .collapsible-content.is-collapsed { max-height: 0; }
-
-        .progress-container { 
-            width: 100%; height: 4px; background: #0a0a0a; border-radius: 10px; overflow: visible; position: relative;
-        }
-
-        .text-crema { color: #e5e1da; }
-        .text-soft { color: #a3a3a3; }
-        
-        [contenteditable="true"]:focus { outline: none; border-bottom: 1px solid rgba(0, 255, 65, 0.5); }
-        
-        @media (max-width: 768px) {
-            .mobile-sidebar-open { transform: translateX(0) !important; }
-        }
+        .progress-container { width: 100%; height: 4px; background: #0a0a0a; border-radius: 10px; position: relative; }
+        [contenteditable="true"]:focus { outline: none; }
         #sidebar { transition: margin 0.4s ease-in-out, transform 0.3s ease-in-out; }
         body.desktop-sidebar-collapsed #sidebar { margin-left: -320px; }
     </style>
 </head>
 <body class="min-h-screen font-sans flex flex-col md:flex-row antialiased relative">
 
-    <div id="sidebarOverlay" class="fixed inset-0 bg-black/80 z-40 hidden md:hidden backdrop-blur-sm transition-opacity" onclick="toggleSidebarMobile()"></div>
+    <div id="sidebarOverlay" class="fixed inset-0 bg-black/80 z-40 hidden md:hidden backdrop-blur-sm" onclick="toggleSidebarMobile()"></div>
 
-    <aside id="sidebar" class="fixed inset-y-0 left-0 w-4/5 md:w-[320px] h-screen border-r border-white/5 bg-[#0f0f0f] flex flex-col z-50 transform -translate-x-full md:translate-x-0 transition-all duration-300 ease-in-out shadow-2xl md:shadow-none shrink-0">
-        <header class="p-6 md:p-8 flex justify-between items-center">
-            <div>
-                <h1 class="text-xs font-semibold tracking-[0.4em] text-crema uppercase">Sembrador</h1>
-                <p class="text-[9px] text-soft mt-2 uppercase tracking-widest italic opacity-60">Destilería de Ideas</p>
+    <aside id="sidebar" class="fixed inset-y-0 left-0 w-4/5 md:w-[320px] h-screen border-r border-white/5 bg-[#0f0f0f] flex flex-col z-50 transform -translate-x-full md:translate-x-0 transition-all duration-300">
+        <header class="p-6 md:p-8 flex flex-col gap-6">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-xs font-semibold tracking-[0.4em] text-[#e5e1da] uppercase">Sembrador</h1>
+                    <p class="text-[9px] text-[#a3a3a3] mt-2 uppercase tracking-widest italic opacity-60">Destilería de Ideas</p>
+                </div>
+                <button onclick="toggleSidebarMobile()" class="md:hidden text-[#a3a3a3] hover:text-crema p-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
             </div>
-            <button onclick="toggleSidebarMobile()" class="md:hidden text-soft hover:text-crema p-2">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            <button onclick="nuevoManuscrito()" class="w-full bg-matrix-500/10 text-matrix-500 border border-matrix-500/30 py-4 rounded-xl text-[10px] font-bold tracking-[0.2em] uppercase hover:bg-matrix-500 hover:text-black transition-all">
+                + NUEVO MANUSCRITO
             </button>
         </header>
-
-        <nav class="flex border-y border-white/5 text-[9px] md:text-[8px] font-bold tracking-widest uppercase text-soft">
-            <button onclick="cambiarFiltro('todos')" class="flex-1 py-4 hover:text-crema transition-colors">Todos</button>
-            <button onclick="cambiarFiltro('semilla')" class="flex-1 py-4 hover:text-crema transition-colors">Semillas</button>
-            <button onclick="cambiarFiltro('cosecha')" class="flex-1 py-4 hover:text-crema transition-colors">Cosecha</button>
+        <nav class="flex border-y border-white/5 text-[9px] font-bold tracking-widest uppercase text-[#a3a3a3]">
+            <button onclick="cambiarFiltro('todos')" class="flex-1 py-4 hover:text-white transition-colors border-r border-white/5">Todos</button>
+            <button onclick="cambiarFiltro('semilla')" class="flex-1 py-4 hover:text-white transition-colors border-r border-white/5">Semillas</button>
+            <button onclick="cambiarFiltro('cosecha')" class="flex-1 py-4 hover:text-white transition-colors">Cosecha</button>
         </nav>
-
         <div id="historialLateral" class="flex-1 overflow-y-auto pt-4 pb-20 md:pb-4"></div>
     </aside>
 
-    <main class="flex-1 relative transition-all duration-700 w-full bg-[#121212] min-h-screen md:ml-0">
-        <header class="main-header sticky top-0 z-20 bg-[#121212]/90 backdrop-blur-md p-4 md:p-6 flex justify-between items-center border-b border-white/5 transition-colors">
+    <main class="flex-1 relative transition-all duration-700 w-full bg-[#121212] min-h-screen">
+        <header class="main-header sticky top-0 z-20 bg-[#121212]/90 backdrop-blur-md p-4 md:p-6 flex justify-between items-center border-b border-white/5">
             <div class="flex gap-2 md:gap-4 items-center">
-                <button onclick="toggleSidebarMobile()" class="md:hidden text-soft hover:text-crema p-2 rounded bg-white/5 border border-white/5 hide-in-focus">
+                <button onclick="toggleSidebarMobile()" class="md:hidden text-[#a3a3a3] hover:text-white p-2 rounded bg-white/5 border border-white/5">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                 </button>
-                <button onclick="toggleSidebarDesktop()" class="hidden md:flex items-center gap-2 text-[10px] uppercase tracking-widest font-bold text-soft hover:text-crema p-2 px-4 rounded-lg bg-white/5 hover:bg-white/10 transition-colors border border-white/5 hide-in-focus" title="Ocultar/Mostrar Panel">
-                    ◫ Panel
-                </button>
-                <button onclick="toggleEnfoque()" id="btnEnfoque" class="text-[10px] uppercase tracking-widest font-bold text-soft hover:text-matrix-500 p-2 px-4 rounded-lg bg-white/5 hover:bg-white/10 transition-colors border border-white/5">
-                    ⌖ Enfoque
-                </button>
+                <button onclick="toggleSidebarDesktop()" class="hidden md:flex items-center gap-2 text-[10px] uppercase tracking-widest font-bold text-[#a3a3a3] hover:text-white p-2 px-4 rounded-lg bg-white/5 border border-white/5">◫ Panel</button>
             </div>
-            <div class="nav-links flex gap-4 md:gap-6 items-center transition-all duration-500">
-                <button onclick="exportarDatos()" class="text-soft hover:text-crema text-[9px] font-bold uppercase tracking-widest hidden md:block">Backup</button>
-                <button onclick="document.getElementById('modalConfig').classList.remove('hidden')" class="text-soft hover:text-crema p-2 text-lg hover:rotate-90 transition-transform">⚙️</button>
+            <div class="nav-links flex gap-6 items-center">
+                <button onclick="exportarDatos()" class="text-[#a3a3a3] hover:text-white text-[9px] font-bold uppercase tracking-widest hidden md:block">Backup</button>
+                <button onclick="document.getElementById('modalConfig').classList.remove('hidden')" class="text-lg hover:rotate-90 transition-transform">⚙️</button>
             </div>
         </header>
-
-        <div class="max-w-3xl mx-auto py-8 md:py-12 px-4 md:px-8 space-y-12 md:space-y-16">
-            
-            <section id="panelControl" class="academic-border p-5 md:p-8 bg-white/[0.02] rounded-xl transition-all duration-500 hide-in-focus">
-                <div class="flex justify-between items-center cursor-pointer" onclick="toggleElemento('controlBody', 'btnTogControl')">
-                    <h2 class="text-[10px] md:text-[9px] font-bold tracking-[0.3em] text-soft uppercase">Añadir al registro</h2>
-                    <button id="btnTogControl" class="text-soft hover:text-crema text-xl px-2">−</button>
-                </div>
-                
-                <div id="controlBody" class="collapsible-content space-y-6 md:space-y-8 mt-6">
-                    <select id="ideaPadre" class="w-full bg-[#0a0a0a] border border-white/5 p-4 text-[12px] md:text-[11px] text-soft outline-none rounded-lg appearance-none cursor-pointer"></select>
-                    
-                    <div>
-                        <textarea id="nuevoApunte" rows="4" class="w-full bg-transparent border-b border-white/10 p-2 text-crema focus:border-matrix-500/50 outline-none resize-none font-serif text-lg md:text-xl transition-all" placeholder="Escribe un pensamiento libre..."></textarea>
-                        <div class="text-[10px] text-soft/50 text-right mt-1 font-mono uppercase tracking-widest">
-                            Caracteres: <span id="charCount">0</span>
-                        </div>
-                    </div>
-                    
-                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 md:gap-0">
-                        <div class="flex gap-6 md:gap-8">
-                            <label class="text-[10px] md:text-[9px] font-bold text-soft flex items-center gap-2 cursor-pointer uppercase tracking-widest opacity-80 hover:opacity-100 transition-opacity">
-                                <input type="checkbox" id="checkIA" checked class="accent-matrix-500 w-4 h-4" onchange="toggleMapCheck()"> Usar IA
-                            </label>
-                            <label id="lblMapa" class="text-[10px] md:text-[9px] font-bold text-soft flex items-center gap-2 cursor-pointer uppercase tracking-widest opacity-80 hover:opacity-100 transition-opacity">
-                                <input type="checkbox" id="checkMapa" checked class="accent-matrix-500 w-4 h-4"> Mapa
-                            </label>
-                        </div>
-                      <div class="flex gap-2 w-full md:w-auto">
-    <button onclick="intercambiarTextos()" id="btnIntercambio" class="px-4 py-4 md:py-3 bg-white/5 text-soft border border-white/10 text-lg hover:bg-white/10 hover:text-crema transition-all rounded-lg md:rounded-full" title="Intercambiar con el registro">⇄</button>
-    
-    <button onclick="procesarPensamiento()" id="btnEjecutar" class="flex-1 md:flex-none px-8 py-4 md:py-3 bg-matrix-500/10 text-matrix-500 border border-matrix-500/20 text-[10px] font-bold tracking-widest uppercase hover:bg-matrix-500 hover:text-black transition-all rounded-lg md:rounded-full">Integrar</button>
-</div>
-                    </div>
-                </div>
-            </section>
-
-            <div id="visorActivo" class="space-y-16 pb-20 transition-all duration-300"></div>
+        <div class="max-w-3xl mx-auto py-8 md:py-12 px-4 md:px-8">
+            <div id="visorActivo" class="space-y-16 pb-20"></div>
         </div>
     </main>
 
-    <div id="modalConfig" class="hidden fixed inset-0 bg-black/90 z-[60] flex justify-center items-center p-4 backdrop-blur-sm">
-        <div class="bg-[#0f0f0f] border border-white/10 p-8 md:p-12 max-w-sm w-full space-y-8 rounded-2xl shadow-2xl">
-            <h2 class="text-[11px] md:text-[10px] font-bold tracking-[0.4em] uppercase text-crema border-b border-white/5 pb-4">Configuración</h2>
+    <div id="modalConfig" class="hidden fixed inset-0 bg-black/90 z- flex justify-center items-center p-4 backdrop-blur-sm">
+        <div class="bg-[#0f0f0f] border border-white/10 p-8 md:p-12 max-w-sm w-full space-y-8 rounded-2xl">
+            <h2 class="text-[10px] font-bold tracking-[0.4em] uppercase text-[#e5e1da] border-b border-white/5 pb-4">Configuración</h2>
             <div class="space-y-2">
-                <label class="text-[9px] text-soft uppercase tracking-widest">API Key (OpenRouter)</label>
-                <input type="password" id="apiKeyInput" class="w-full bg-[#0a0a0a] border border-white/10 p-4 text-xs text-crema outline-none rounded-lg focus:border-matrix-500/50 transition-colors" placeholder="sk-or-v1-...">
+                <label class="text-[9px] text-[#a3a3a3] uppercase tracking-widest">API Key (OpenRouter)</label>
+                <input type="password" id="apiKeyInput" class="w-full bg-[#0a0a0a] border border-white/10 p-4 text-xs text-white outline-none rounded-lg focus:border-matrix-500/50" placeholder="sk-or-v1-...">
             </div>
             <div class="flex gap-4">
-                <button onclick="guardarConfig()" class="flex-1 bg-crema text-black py-4 text-[10px] font-bold uppercase tracking-widest rounded-lg hover:bg-white transition-colors">Guardar</button>
-                <button onclick="document.getElementById('modalConfig').classList.add('hidden')" class="flex-1 text-soft bg-white/5 py-4 text-[10px] font-bold uppercase tracking-widest rounded-lg hover:bg-white/10 transition-colors">Cerrar</button>
+                <button onclick="guardarConfig()" class="flex-1 bg-[#e5e1da] text-black py-4 text-[10px] font-bold uppercase tracking-widest rounded-lg hover:bg-white transition-colors">Guardar</button>
+                <button onclick="document.getElementById('modalConfig').classList.add('hidden')" class="flex-1 text-[#a3a3a3] bg-white/5 py-4 text-[10px] font-bold uppercase tracking-widest rounded-lg hover:bg-white/10 transition-colors">Cerrar</button>
             </div>
-            <button onclick="exportarDatos()" class="w-full md:hidden mt-4 text-matrix-500 text-[10px] font-bold uppercase tracking-widest border border-matrix-500/20 py-3 rounded-lg">Exportar Backup (Móvil)</button>
         </div>
     </div>
 
     <script>
-        let API_KEY = localStorage.getItem('artesano_key') || "";
-        let pensamientos = [];
+        function safeSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
+        function safeGet(k, d) { try { const i = localStorage.getItem(k); return i ? JSON.parse(i) : d; } catch(e){ return d; } }
+
+        let API_KEY = safeGet('artesano_key', "");
+        let pensamientos = safeGet('artesano_data', []);
         let pensamientoActivoId = null; 
         let isTimerRunning = false;
         let filtroActual = 'todos';
-        let timeoutEdicion = null; 
-        window.mapZoomInstance = null;
-        
-        let tamanoFuenteActual = localStorage.getItem('artesano_fuente') || '20';
+        let tamanoFuenteActual = safeGet('artesano_fuente', '20');
 
-        try { pensamientos = JSON.parse(localStorage.getItem('artesano_data')) || []; } catch(e) { pensamientos = []; }
-        document.getElementById('apiKeyInput').value = API_KEY;
-        renderizar();
-
-        function toggleSidebarMobile() { 
-            document.getElementById('sidebar').classList.toggle('mobile-sidebar-open');
-            document.getElementById('sidebarOverlay').classList.toggle('hidden');
+        function nuevoManuscrito() {
+            const nuevo = { id: Date.now(), titulo: "BORRADOR NUEVO", texto_fusionado: "", madurez: 0, tiempo_segundos: 0, dialogos: [], mapa_mermaid: "", titulo_manual: false };
+            pensamientos.unshift(nuevo);
+            safeSet('artesano_data', pensamientos);
+            pensamientoActivoId = nuevo.id;
+            renderizar();
+            setTimeout(() => document.getElementById('textoManuscrito')?.focus(), 100);
         }
 
-        function toggleSidebarDesktop() {
-            document.body.classList.toggle('desktop-sidebar-collapsed');
-        }
-
-        function toggleEnfoque() {
-            document.body.classList.toggle('focus-active');
-            const btn = document.getElementById('btnEnfoque');
-            if (document.body.classList.contains('focus-active')) {
-                btn.innerHTML = "◎ Modo Normal";
-                btn.classList.add('text-matrix-500', 'border-matrix-500/30');
-            } else {
-                btn.innerHTML = "⌖ Enfoque";
-                btn.classList.remove('text-matrix-500', 'border-matrix-500/30');
-            }
-        }
-
-        function toggleElemento(targetId, btnId) {
-            const el = document.getElementById(targetId);
-            const btn = document.getElementById(btnId);
-            el.classList.toggle('is-collapsed');
-            if (btn) btn.innerText = el.classList.contains('is-collapsed') ? "+" : "−";
-        }
-
-        function cambiarFiltro(tipo) { 
-            filtroActual = tipo; 
-            renderizarLateral(); 
-            if(window.innerWidth < 768) toggleSidebarMobile(); 
-        }
-
-        function cambiarFuente(size) {
-            tamanoFuenteActual = size;
-            localStorage.setItem('artesano_fuente', size);
-            document.getElementById('textoManuscrito').style.fontSize = `${size}px`;
-        }
-
-        function guardarTitulo(id, nuevoTitulo) {
+        function editarTituloManuscrito(id, nuevo) {
             const p = pensamientos.find(x => x.id === id);
-            if(p) { p.titulo = nuevoTitulo.trim(); localStorage.setItem('artesano_data', JSON.stringify(pensamientos)); renderizarLateral(); }
-        }
-
-        function autoGuardarEdicion(id, nuevoTexto) {
-            clearTimeout(timeoutEdicion);
-            const mainCounter = document.getElementById('charCountPrincipal');
-            if(mainCounter) mainCounter.textContent = nuevoTexto.length;
-
-            timeoutEdicion = setTimeout(() => {
-                const p = pensamientos.find(x => x.id === id);
-                if(p && p.texto_fusionado !== nuevoTexto.trim()) {
-                    p.texto_fusionado = nuevoTexto.trim();
-                    localStorage.setItem('artesano_data', JSON.stringify(pensamientos));
-                    renderizarLateral(); 
-                }
-            }, 1000); 
-        }
-
-        function guardarEdicion(id, nuevoTexto) {
-            const p = pensamientos.find(x => x.id === id);
-            if(p && p.texto_fusionado !== nuevoTexto.trim()) {
-                p.texto_fusionado = nuevoTexto.trim();
-                localStorage.setItem('artesano_data', JSON.stringify(pensamientos));
+            if(p) {
+                p.titulo = nuevo.toUpperCase() || "BORRADOR NUEVO";
+                p.titulo_manual = (nuevo.trim() !== "");
+                safeSet('artesano_data', pensamientos);
                 renderizarLateral();
             }
         }
 
-        function capturarSeleccion(id) {
-            const seleccion = window.getSelection().toString().trim();
-            if (seleccion) {
-                const inputEl = document.getElementById(`inputProfundizar-${id}`);
-                if (inputEl) {
-                    inputEl.value = `Analiza esto: "${seleccion}"`;
-                    inputEl.classList.add('border-matrix-500', 'bg-matrix-500/10');
-                    setTimeout(() => inputEl.classList.remove('border-matrix-500', 'bg-matrix-500/10'), 600);
-                }
-            }
-        }
-
-        function guardarMadurez(id, valor) {
+        function autoGuardar(id, texto) {
             const p = pensamientos.find(x => x.id === id);
-            if(p) { 
-                p.madurez = parseInt(valor); 
-                localStorage.setItem('artesano_data', JSON.stringify(pensamientos)); 
-                renderizarLateral(); 
-                document.getElementById(`madurez-text-${id}`).innerText = valor + '%';
+            if(!p) return;
+            p.texto_fusionado = texto;
+            const charEl = document.getElementById('charCountPrincipal');
+            if(charEl) charEl.textContent = texto.length;
+            
+            if(!p.titulo_manual || p.titulo === "BORRADOR NUEVO") {
+                const firstLine = texto.split('\n').substring(0, 35).toUpperCase();
+                p.titulo = firstLine || "BORRADOR NUEVO";
+                const titEl = document.getElementById('tituloPrincipalVisor');
+                if(titEl && document.activeElement !== titEl) titEl.innerText = p.titulo;
             }
+            
+            clearTimeout(window.saveTimer);
+            window.saveTimer = setTimeout(() => { safeSet('artesano_data', pensamientos); renderizarLateral(); }, 800);
         }
 
-        function formatearTiempo(segundos) {
-            const h = Math.floor(segundos / 3600);
-            const m = Math.floor((segundos % 3600) / 60);
-            const s = segundos % 60;
-            if (h > 0) return `${h}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-            return `${m}:${s.toString().padStart(2,'0')}`;
+        function formatearTiempo(s) {
+            const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), seg = s % 60;
+            if (h > 0) return `${h}:${m.toString().padStart(2,'0')}:${seg.toString().padStart(2,'0')}`;
+            return `${m.toString().padStart(2,'0')}:${seg.toString().padStart(2,'0')}`;
         }
-        
+
         function actualizarTiempoManual(id, el) {
-            const val = el.innerText.trim();
             const p = pensamientos.find(x => x.id === id);
-            if (!p) return;
-            
-            const partes = val.split(':').map(Number);
-            let seg = 0;
-            if(partes.length === 3) seg = (partes[0]*3600) + (partes[1]*60) + (partes[2] || 0);
-            else if(partes.length === 2) seg = (partes[0]*60) + (partes[1] || 0);
-            else if(partes.length === 1) seg = partes[0] || 0;
-            
-            if(!isNaN(seg)) {
-                p.tiempo_segundos = seg;
-                localStorage.setItem('artesano_data', JSON.stringify(pensamientos));
-            }
+            if(!p) return;
+            const partes = el.innerText.split(':').map(Number);
+            let s = 0;
+            if(partes.length === 3) s = (partes*3600) + (partes*60) + partes;
+            else if(partes.length === 2) s = (partes*60) + partes;
+            p.tiempo_segundos = isNaN(s) ? p.tiempo_segundos : s;
+            safeSet('artesano_data', pensamientos);
             el.innerText = formatearTiempo(p.tiempo_segundos);
         }
 
-        function eliminarPensamiento(id, event) {
-            event.stopPropagation();
-            if(confirm("¿Estás seguro de que deseas eliminar este apunte completo? Esta acción no se puede deshacer.")) {
-                pensamientos = pensamientos.filter(p => p.id !== id);
-                localStorage.setItem('artesano_data', JSON.stringify(pensamientos));
-                if(pensamientoActivoId === id) {
-                    pensamientoActivoId = pensamientos.length > 0 ? pensamientos[0].id : null;
-                }
-                renderizar();
-            }
-        }
-
-        function eliminarConsulta(idPensamiento, indexDialogo) {
-            if(confirm("¿Estás seguro de que deseas eliminar este análisis?")) {
-                const p = pensamientos.find(x => x.id === idPensamiento);
-                if(p && p.dialogos) {
-                    p.dialogos.splice(indexDialogo, 1);
-                    localStorage.setItem('artesano_data', JSON.stringify(pensamientos));
-                    renderizar();
-                }
+        function actualizarMadurez(id, valor) {
+            const m = parseInt(valor) || 0;
+            const p = pensamientos.find(x => x.id === id);
+            if(p) {
+                p.madurez = m;
+                safeSet('artesano_data', pensamientos);
+                document.getElementById(`madurez-text-${id}`).innerText = m + '%';
+                const slider = document.getElementById(`slider-${id}`);
+                if(slider) slider.className = `w-full cursor-pointer transition-colors duration-300 ${m <= 33 ? 'accent-m-red' : m <= 66 ? 'accent-m-amber' : 'accent-m-green'}`;
+                renderizarLateral();
             }
         }
 
@@ -346,569 +194,195 @@
             if (isTimerRunning && pensamientoActivoId) {
                 const p = pensamientos.find(x => x.id === pensamientoActivoId);
                 if (p) {
-                    p.tiempo_segundos = (p.tiempo_segundos || 0) + 1;
-                    const tEl = document.getElementById('textoRelojActivo');
-                    const lEl = document.getElementById(`reloj-lateral-${p.id}`);
-                    if (tEl && document.activeElement !== tEl) tEl.textContent = formatearTiempo(p.tiempo_segundos);
-                    if (lEl) lEl.textContent = formatearTiempo(p.tiempo_segundos);
+                    p.tiempo_segundos++;
+                    const el = document.getElementById('textoRelojActivo');
+                    if (el && document.activeElement !== el) el.textContent = formatearTiempo(p.tiempo_segundos);
+                    const elLat = document.getElementById(`time-lat-${p.id}`);
+                    if (elLat) elLat.textContent = formatearTiempo(p.tiempo_segundos);
                 }
             }
         }, 1000);
 
-        async function procesarPensamiento() {
-            const checkIA = document.getElementById('checkIA').checked;
-            const reqMapa = document.getElementById('checkMapa').checked && checkIA;
-            if (checkIA && !API_KEY) { document.getElementById('modalConfig').classList.remove('hidden'); return; }
-            
-            const input = document.getElementById('nuevoApunte');
-            const select = document.getElementById('ideaPadre');
-            const btn = document.getElementById('btnEjecutar');
-            const texto = input.value.trim(); 
-            if(!texto) return;
-
-            btn.disabled = true; 
-            btn.innerText = "SINTETIZANDO...";
-
-            try {
-                let p_anterior = (select.value !== "nueva") ? pensamientos.find(x => x.id == select.value) : null;
-                let res = {};
-
-                if(checkIA) {
-                    const promptSystem = `Actúa como un articulador de ideas y asistente de redacción. Tu tarea es anexar una "Nueva reflexión" a un "Manuscrito actual".
-REGLAS ESTRICTAS DE ORO:
-1. DEBES MANTENER ABSOLUTAMENTE INTACTA la estructura, el tono y todo el contenido del "Manuscrito actual". Bajo ninguna circunstancia borres, resumas o alteres el texto original.
-2. Toma la "Nueva reflexión", tradúcela a un lenguaje preciso, articulado y lógico que mantenga la coherencia con el resto de la obra.
-3. Anexa esta nueva reflexión refinada de manera fluida al final del manuscrito (o intégrala con un conector lógico pertinente al final).
-4. Devuelve el texto completo resultante (El Manuscrito original INTACTO + Tu anexo refinado).
-${reqMapa ? 'IMPORTANTE: Construye también un mapa conceptual en Mermaid (graph TD). REGLAS: Nombres muy cortos, sin caracteres especiales en los nodos, sin estilos.' : 'No generes mapa mermaid, deja el campo vacío.'}
-Devuelve ÚNICAMENTE un objeto JSON válido con este formato exacto:
-{"texto_fusionado": "tu texto...", "mapa_mermaid": "${reqMapa ? 'graph TD\\nA[Idea] --> B[Otra]' : ''}"}`;
-
-                    const promptUser = p_anterior ? `Manuscrito actual:\n"${p_anterior.texto_fusionado}"\n\nNueva reflexión a integrar:\n"${texto}"` : `Reflexión inicial: "${texto}"`;
-                    
-                    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-                        method: 'POST', 
-                        headers: { 
-                            'Content-Type': 'application/json', 
-                            'Authorization': `Bearer ${API_KEY}`,
-                            'HTTP-Referer': 'https://alucardvill.github.io',
-                            'X-Title': 'Sembrador'
-                        },
-                        body: JSON.stringify({ 
-                            model: 'google/gemini-2.0-flash-001', 
-                            messages: [
-                                {role: 'system', content: promptSystem}, 
-                                {role: 'user', content: promptUser}
-                            ], 
-                            response_format: { type: "json_object" }
-                        })
-                    });
-
-                    if (!response.ok) {
-                        const errData = await response.json();
-                        throw new Error(errData.error?.message || `Error HTTP ${response.status}`);
-                    }
-                    
-                    const data = await response.json();
-                    let contenidoBruto = data.choices[0].message.content;
-                    
-                    contenidoBruto = contenidoBruto.replace(/```json/gi, '').replace(/```/g, '').trim();
-                    res = JSON.parse(contenidoBruto);
-                    
-                } else {
-                    res = { texto_fusionado: p_anterior ? `${p_anterior.texto_fusionado}\n\n${texto}` : texto, mapa_mermaid: p_anterior ? p_anterior.mapa_mermaid : "" };
-                }
-                
-                const nuevoPensamiento = { 
-                    id: Date.now(), ...res, 
-                    madurez: p_anterior ? p_anterior.madurez : 0, 
-                    tiempo_segundos: p_anterior ? p_anterior.tiempo_segundos : 0, 
-                    titulo: (p_anterior ? p_anterior.titulo : texto.substring(0,30) + '...'),
-                    dialogos: p_anterior && p_anterior.dialogos ? [...p_anterior.dialogos] : [] 
-                };
-
-                if (select.value === "nueva") {
-                    pensamientos.unshift(nuevoPensamiento);
-                } else { 
-                    const idx = pensamientos.findIndex(p => p.id == select.value); 
-                    pensamientos[idx] = { ...pensamientos[idx], ...nuevoPensamiento }; 
-                }
-                
-                //input.value = "" 
-              document.getElementById('charCount').textContent = input.value.length;
-                pensamientoActivoId = nuevoPensamiento.id; 
-                isTimerRunning = true; 
-                localStorage.setItem('artesano_data', JSON.stringify(pensamientos));
-                renderizar();
-            } catch (e) { 
-                console.error(e);
-                alert(`Error al procesar: ${e.message}\n\nVerifica tus créditos de OpenRouter o tu conexión.`); 
-            } finally { 
-                btn.disabled = false; 
-                btn.innerText = "INTEGRAR"; 
-            }
-        }
-
-        async function regenerarMapaIndependiente(id) {
-            if (!API_KEY) { document.getElementById('modalConfig').classList.remove('hidden'); return; }
-            const p = pensamientos.find(x => x.id === id);
-            if(!p || !p.texto_fusionado) return;
-
-            const btn = document.getElementById(`btnRegenerarMapa`);
-            const textoOriginal = btn.innerText;
-            btn.innerText = "↻ GENERANDO...";
-            btn.disabled = true;
-
-            try {
-                const promptSystem = `Actúa como un experto en síntesis visual y mapas conceptuales. Crea un diagrama Mermaid (graph TD) basado estrictamente en el texto proporcionado.
-REGLAS ESTRICTAS: 1. Nombres de nodos muy cortos. 2. ESTRICTAMENTE PROHIBIDO usar caracteres especiales (, . " ' : ;) dentro de los corchetes de los nodos. 3. NO apliques estilos.
-Devuelve ÚNICAMENTE el código de Mermaid crudo. Sin bloques de código markdown, sin texto adicional, sin la palabra "mermaid". Solo empieza con "graph TD".`;
-                
-                const promptUser = `Genera el mapa conceptual para este texto:\n"${p.texto_fusionado}"`;
-
-                const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-                    method: 'POST', 
-                    headers: { 
-                        'Content-Type': 'application/json', 
-                        'Authorization': `Bearer ${API_KEY}`,
-                        'HTTP-Referer': 'https://alucardvill.github.io',
-                        'X-Title': 'Sembrador'
-                    },
-                    body: JSON.stringify({ 
-                        model: 'google/gemini-2.0-flash-001', 
-                        messages: [
-                            {role: 'system', content: promptSystem}, 
-                            {role: 'user', content: promptUser}
-                        ]
-                    })
-                });
-
-                if (!response.ok) {
-                    const errData = await response.json();
-                    throw new Error(errData.error?.message || `Error HTTP ${response.status}`);
-                }
-                
-                const data = await response.json();
-                let nuevoMapa = data.choices[0].message.content;
-                nuevoMapa = nuevoMapa.replace(/```mermaid/gi, '').replace(/```/g, '').trim();
-                
-                p.mapa_mermaid = nuevoMapa;
-                localStorage.setItem('artesano_data', JSON.stringify(pensamientos));
-                renderizar();
-            } catch (e) { 
-                console.error(e);
-                alert(`Error al regenerar mapa: ${e.message}`); 
-            } finally { 
-                if(btn) {
-                    btn.disabled = false; 
-                    btn.innerText = textoOriginal;
-                }
-            }
-        }
-
-        async function profundizarPensamiento(id) {
-            if (!API_KEY) { document.getElementById('modalConfig').classList.remove('hidden'); return; }
-            
-            const p = pensamientos.find(x => x.id === id);
-            const inputEl = document.getElementById(`inputProfundizar-${id}`);
-            const btnEl = document.getElementById(`btnProfundizar-${id}`);
-            const pregunta = inputEl.value.trim();
-            
-            if (!pregunta || !p) return;
-
-            btnEl.disabled = true;
-            btnEl.innerText = "ANALIZANDO...";
-
-            try {
-                const promptSystem = `Actúa como un analista lógico y objetivo. Tu propósito es ayudar al usuario a profundizar en su reflexión analizando las implicaciones de lo que ha escrito y traducir técnicamente sus ideas cuando necesario para elevar su reflexión.
-Responde de manera sobria, realista, estructurada y fundamentada en hechos o lógica deductiva. Elimina por completo el lenguaje poético, las metáforas y las florituras literarias. Sé directo, racional y analítico.`;
-                const promptUser = `Manuscrito actual:\n"${p.texto_fusionado}"\n\nPregunta a responder o premisa a analizar: "${pregunta}"`;
-
-                const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-                    method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json', 
-                        'Authorization': `Bearer ${API_KEY}`,
-                        'HTTP-Referer': 'https://alucardvill.github.io',
-                        'X-Title': 'Sembrador'
-                    },
-                    body: JSON.stringify({
-                        model: 'google/gemini-2.0-flash-001',
-                        messages: [
-                            {role: 'system', content: promptSystem},
-                            {role: 'user', content: promptUser}
-                        ]
-                    })
-                });
-
-                if (!response.ok) {
-                    const errData = await response.json();
-                    throw new Error(errData.error?.message || `Error HTTP ${response.status}`);
-                }
-
-                const data = await response.json();
-                const respuesta = data.choices[0].message.content;
-
-                if (!p.dialogos) p.dialogos = [];
-                p.dialogos.unshift({ pregunta: pregunta, respuesta: respuesta });
-                
-                inputEl.value = ""; 
-                localStorage.setItem('artesano_data', JSON.stringify(pensamientos));
-                renderizar(); 
-            } catch (e) {
-                console.error(e);
-                alert(`Error al profundizar: ${e.message}`);
-            } finally {
-                if(btnEl) {
-                    btnEl.disabled = false;
-                    btnEl.innerText = "CONSULTAR";
-                }
-            }
-        }
-
         function renderizarLateral() {
-            const sidebar = document.getElementById('historialLateral');
-            const select = document.getElementById('ideaPadre');
-            sidebar.innerHTML = ""; 
-            select.innerHTML = '<option value="nueva">✦ Nueva línea de investigación</option>';
-            
+            const container = document.getElementById('historialLateral');
+            container.innerHTML = "";
             const filtrados = pensamientos.filter(p => {
-                if (filtroActual === 'semilla') return (p.madurez || 0) <= 50;
-                if (filtroActual === 'cosecha') return (p.madurez || 0) > 50;
+                if (filtroActual === 'semilla') return p.madurez <= 50;
+                if (filtroActual === 'cosecha') return p.madurez > 50;
                 return true;
             });
-
             filtrados.forEach(p => {
                 const isActivo = p.id === pensamientoActivoId;
-                const mad = p.madurez || 0;
-                let colorClass, glowClass;
-                if (mad <= 30) { colorClass = 'bg-coral-400'; glowClass = 'glow-soft-coral'; }
-                else if (mad <= 70) { colorClass = 'bg-matrix-400'; glowClass = 'glow-soft-matrix'; }
-                else { colorClass = 'bg-mint-400'; glowClass = 'glow-soft-mint'; }
-                
-                const opt = document.createElement('option'); 
-                opt.value = p.id; 
-                opt.textContent = "↳ " + (p.titulo || "Sin título"); 
-                select.appendChild(opt);
-                
+                const m = parseInt(p.madurez) || 0;
+                let color = m <= 33 ? 'bg-m-red' : m <= 66 ? 'bg-m-amber' : 'bg-m-green';
+                let glow = m <= 33 ? 'glow-red' : m <= 66 ? 'glow-amber' : 'glow-green';
                 const item = document.createElement('div');
-                item.className = `p-5 md:p-6 mb-2 cursor-pointer transition-all border-l-2 ${isActivo ? 'border-matrix-500 bg-white/[0.03]' : 'border-transparent hover:bg-white/[0.01]'}`;
+                item.className = `p-6 mb-2 cursor-pointer transition-all border-l-2 ${isActivo ? 'border-matrix-500 bg-white/[0.04]' : 'border-transparent hover:bg-white/[0.02]'}`;
+                item.onclick = () => { pensamientoActivoId = p.id; renderizar(); if(window.innerWidth < 768) toggleSidebarMobile(); };
                 item.innerHTML = `
-                    <div class="mb-4" onclick="seleccionarPensamiento(${p.id})">
-                        <div class="flex justify-between items-start mb-2">
-                            <div contenteditable="true" onblur="guardarTitulo(${p.id}, this.innerText)" onclick="event.stopPropagation()" class="flex-1 text-[11px] md:text-[10px] font-bold uppercase tracking-widest ${isActivo ? 'text-crema' : 'text-soft'} outline-none break-all">${p.titulo || 'Untitled'}</div>
-                            <button onclick="eliminarPensamiento(${p.id}, event)" class="text-soft hover:text-coral-500 px-2 ml-2 transition-colors text-lg" title="Eliminar apunte completo">×</button>
-                        </div>
-                        <p class="text-[13px] md:text-[12px] font-serif ${isActivo ? 'text-soft' : 'text-soft/40'} line-clamp-2 italic leading-relaxed text-justify">${p.texto_fusionado}</p>
+                    <div class="flex justify-between items-start mb-3 group/item">
+                        <div class="text-[10px] font-bold uppercase tracking-[0.15em] ${isActivo ? 'text-[#e5e1da]' : 'text-[#a3a3a3]/60'} flex-1 pr-4 line-clamp-1">${p.titulo || 'BORRADOR NUEVO'}</div>
+                        <button onclick="event.stopPropagation(); if(confirm('¿Eliminar?')){pensamientos=pensamientos.filter(x=>x.id!==${p.id}); safeSet('artesano_data',pensamientos); renderizar();}" class="text-soft/20 hover:text-coral-500 transition-colors">×</button>
                     </div>
-                    <div class="space-y-3">
-                        <div class="flex justify-between items-center text-[8px] md:text-[7px] font-bold text-soft/50 uppercase tracking-widest">
-                            <span>Maduración (${mad}%)</span>
-                            <span id="reloj-lateral-${p.id}">${formatearTiempo(p.tiempo_segundos || 0)}</span>
-                        </div>
-                        <div class="progress-container">
-                            <div class="h-full ${colorClass} ${glowClass} rounded-full transition-all duration-1000" style="width: ${mad}%"></div>
-                        </div>
-                    </div>`;
-                sidebar.appendChild(item);
+                    <div class="font-serif text-[12px] italic text-[#a3a3a3]/40 line-clamp-2 mb-4 leading-relaxed">${p.texto_fusionado || "Sin contenido..."}</div>
+                    <div class="flex justify-between items-center text-[8px] font-bold tracking-widest text-[#a3a3a3]/40 uppercase mb-2">
+                        <span>MADURACIÓN (${m}%)</span>
+                        <span id="time-lat-${p.id}">${formatearTiempo(p.tiempo_segundos)}</span>
+                    </div>
+                    <div class="progress-container"><div class="h-full ${color} ${glow} transition-all duration-500" style="width: ${m}%"></div></div>
+                `;
+                container.appendChild(item);
             });
-            if(pensamientoActivoId) select.value = pensamientoActivoId;
         }
 
         function renderizar() {
             renderizarLateral();
             const visor = document.getElementById('visorActivo');
-            if(pensamientos.length === 0) { 
-                visor.innerHTML = `<div class="text-center py-32 font-serif text-soft/30 italic text-lg">El archivo está vacío.<br>Comienza tu primer apunte arriba.</div>`; 
-                return; 
-            }
-            if(!pensamientoActivoId) pensamientoActivoId = pensamientos[0].id;
             const p = pensamientos.find(x => x.id === pensamientoActivoId);
             
-            if(p) {
-                const hasMap = p.mapa_mermaid && p.mapa_mermaid.trim() !== "";
-                const hasDialogs = p.dialogos && p.dialogos.length > 0;
-                
-                let htmlDialogos = "";
-                if (hasDialogs) {
-                    htmlDialogos = `
-                    <div class="mt-6 border-t border-white/5 pt-6">
-                        <div class="flex justify-between items-center mb-6 cursor-pointer" onclick="toggleElemento('historialInner', 'btnTogHistorial')">
-                            <p class="text-[10px] md:text-[9px] font-bold tracking-widest text-soft/40 uppercase">Historial de Consultas (${p.dialogos.length})</p>
-                            <button id="btnTogHistorial" class="text-soft hover:text-crema text-xl px-2 transition-colors">−</button>
-                        </div>
-                        <div id="historialInner" class="collapsible-content">
-                            <div class="space-y-4 pb-2 pr-2 max-h-[500px] overflow-y-auto">
-                                ${p.dialogos.map((d, index) => `
-                                <div class="bg-[#151515] border border-white/10 rounded-xl shadow-lg overflow-hidden">
-                                    <div class="p-4 md:p-5 flex justify-between items-center cursor-pointer bg-white/[0.02] hover:bg-white/[0.04] transition-colors" onclick="toggleElemento('dialogoInner-${index}', 'btnTogDialogo-${index}')">
-                                        <div class="text-[9px] md:text-[8px] text-matrix-500 font-bold uppercase tracking-widest pr-4 line-clamp-1">Consulta ${p.dialogos.length - index}: ${d.pregunta}</div>
-                                        <div class="flex items-center gap-4 text-soft">
-                                            <button onclick="event.stopPropagation(); eliminarConsulta(${p.id}, ${index})" class="hover:text-coral-500 text-lg px-2 transition-colors" title="Eliminar consulta">×</button>
-                                            <span id="btnTogDialogo-${index}" class="text-xl px-2 hover:text-crema transition-colors font-mono">−</span>
-                                        </div>
-                                    </div>
-                                    <div id="dialogoInner-${index}" class="collapsible-content">
-                                        <div class="p-4 md:p-5 pt-0 border-t border-white/5 mt-2">
-                                            <div class="font-serif text-crema text-sm md:text-base leading-relaxed whitespace-pre-wrap text-justify">${d.respuesta}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    </div>`;
-                }
-
+            if(!p) { 
                 visor.innerHTML = `
-                    <article class="space-y-10 md:space-y-12">
-                        <header class="visor-header flex flex-col md:flex-row justify-between items-start md:items-end gap-6 md:gap-0 border-b border-white/5 pb-6 md:pb-8 transition-colors duration-300">
-                            <div class="space-y-3">
-                                <h3 class="visor-header-title text-[10px] md:text-[9px] font-bold tracking-[0.4em] text-soft/60 uppercase">Manuscrito</h3>
-                                <div class="font-mono text-[11px] md:text-[10px] text-matrix-500/80 flex items-center gap-2">
-                                    <span onclick="toggleTimer()" class="cursor-pointer p-1 hover:bg-matrix-500/10 rounded transition-colors text-lg" title="Pausar/Reanudar">
-                                        ${isTimerRunning ? '●' : '○'}
-                                    </span> 
-                                    <span id="textoRelojActivo" contenteditable="true" onblur="actualizarTiempoManual(${p.id}, this)" class="outline-none border-b border-transparent focus:border-matrix-500/50 min-w-[40px] px-1 transition-colors" title="Clic para editar tiempo (ej. 1:20 o 45:00)">${formatearTiempo(p.tiempo_segundos || 0)}</span>
-                                    <span class="opacity-20 text-soft mx-2">|</span>
-                                    <span class="text-soft/60 uppercase tracking-widest text-[9px]">
-                                        <span id="charCountPrincipal">${p.texto_fusionado.length}</span> caract.
-                                    </span>
-                                </div>
-                            </div>
-                            
-                            <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto items-center hide-in-focus">
-                                <select onchange="cambiarFuente(this.value)" class="w-full sm:w-auto bg-[#151515] border border-white/10 text-soft text-[9px] uppercase tracking-widest px-3 py-3 md:py-2 rounded-lg outline-none cursor-pointer hover:text-crema hover:border-white/20 transition-all text-center">
-                                    <option value="16" ${tamanoFuenteActual == '16' ? 'selected' : ''}>A- Pequeña</option>
-                                    <option value="20" ${tamanoFuenteActual == '20' ? 'selected' : ''}>A Normal</option>
-                                    <option value="24" ${tamanoFuenteActual == '24' ? 'selected' : ''}>A+ Grande</option>
-                                    <option value="28" ${tamanoFuenteActual == '28' ? 'selected' : ''}>A++ Enorme</option>
-                                </select>
-                                
-                                <div class="flex gap-2 w-full sm:w-auto">
-                                    <button onclick="descargarMD(${p.id})" class="flex-1 md:flex-none text-soft hover:text-crema text-[10px] md:text-[9px] font-bold uppercase tracking-widest border border-white/10 px-4 py-3 md:py-2 rounded-lg md:rounded-full hover:bg-white/5 transition-all text-center">.MD</button>
-                                    <button onclick="descargarPDF(${p.id})" class="flex-1 md:flex-none text-soft hover:text-crema text-[10px] md:text-[9px] font-bold uppercase tracking-widest border border-white/10 px-4 py-3 md:py-2 rounded-lg md:rounded-full hover:bg-white/5 transition-all text-center">.PDF</button>
-                                </div>
-                            </div>
-                        </header>
-
-                        <div id="textoManuscrito" contenteditable="true" 
-                             style="font-size: ${tamanoFuenteActual}px;"
-                             oninput="autoGuardarEdicion(${p.id}, this.innerText)"
-                             onblur="guardarEdicion(${p.id}, this.innerText)" 
-                             onmouseup="capturarSeleccion(${p.id})"
-                             class="font-serif text-crema leading-relaxed font-light outline-none whitespace-pre-wrap px-1 text-justify">${p.texto_fusionado}</div>
-
-                        <section class="pt-8 mt-8 border-t border-white/5 transition-all duration-300">
-                            <div class="flex justify-between items-center mb-6 cursor-pointer group" onclick="toggleElemento('consultaInner', 'btnTogConsulta')">
-                                <p class="text-[10px] md:text-[9px] font-bold tracking-widest text-soft/40 uppercase group-hover:text-soft/80 transition-colors">Análisis Objetivo</p>
-                                <button id="btnTogConsulta" class="text-soft bg-white/5 group-hover:bg-white/10 group-hover:text-crema text-xl w-8 h-8 rounded-full flex items-center justify-center transition-all">−</button>
-                            </div>
-                            
-                            <div id="consultaInner" class="collapsible-content">
-                                <div class="flex flex-col md:flex-row gap-4 items-end md:items-center p-4 bg-white/[0.02] rounded-xl border border-white/5">
-                                    <div class="w-full flex-1">
-                                        <input type="text" id="inputProfundizar-${p.id}" class="w-full bg-transparent border-b border-white/10 p-2 text-crema focus:border-matrix-500/50 outline-none font-serif text-sm transition-all" placeholder="Ej: ¿Cuáles son las implicaciones prácticas de esto?">
-                                    </div>
-                                    <button onclick="profundizarPensamiento(${p.id})" id="btnProfundizar-${p.id}" class="w-full md:w-auto px-6 py-3 bg-white/5 text-soft hover:text-crema border border-white/10 text-[9px] font-bold tracking-widest uppercase hover:bg-white/10 transition-all rounded-lg">Consultar</button>
-                                </div>
-                                ${htmlDialogos}
-                            </div>
-                        </section>
-
-                        <footer class="pt-8 md:pt-12 border-t border-white/5 hide-in-focus">
-                            <div class="flex justify-between text-[10px] md:text-[9px] font-bold uppercase tracking-widest text-soft/40 mb-6">
-                                <span>Progreso de Maduración</span>
-                                <span id="madurez-text-${p.id}">${p.madurez || 0}%</span>
-                            </div>
-                            <input type="range" min="0" max="100" value="${p.madurez || 0}" class="w-full appearance-none bg-[#0a0a0a] h-2 md:h-1 rounded-full cursor-pointer slider-thumb" oninput="guardarMadurez(${p.id}, this.value)">
-                        </footer>
-
-                        <section class="pt-8 md:pt-12 border-t border-white/5 hide-in-focus">
-                            <div class="flex justify-between items-center mb-6 md:mb-8 cursor-pointer group" onclick="toggleElemento('mapaInner', 'btnTogMapa')">
-                                <div class="flex items-center gap-4">
-                                    <p class="text-[10px] md:text-[9px] font-bold tracking-widest text-soft/40 uppercase group-hover:text-soft/80 transition-colors">Estructura Relacional</p>
-                                    <button id="btnRegenerarMapa" onclick="event.stopPropagation(); regenerarMapaIndependiente(${p.id})" class="text-[8px] tracking-widest uppercase font-bold text-matrix-500 hover:text-white bg-matrix-500/10 px-3 py-1.5 rounded transition-colors border border-matrix-500/20">↻ Regenerar</button>
-                                </div>
-                                <button id="btnTogMapa" class="text-soft bg-white/5 group-hover:bg-white/10 group-hover:text-crema text-xl w-8 h-8 rounded-full flex items-center justify-center transition-all">−</button>
-                            </div>
-                            <div id="mapaInner" class="collapsible-content">
-                                ${hasMap ? `
-                                <div id="mapaContainer" class="bg-[#0a0a0a] rounded-xl border border-white/5 w-full h-[400px] relative overflow-hidden group">
-                                    <pre class="mermaid-canvas w-full h-full flex items-center justify-center font-sans m-0 text-transparent">${p.mapa_mermaid}</pre>
-                                    
-                                    <div class="absolute bottom-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                        <button onclick="if(window.mapZoomInstance) window.mapZoomInstance.zoomIn()" class="bg-[#151515] text-soft hover:text-white px-3 py-2 rounded shadow-lg border border-white/10 hover:border-matrix-500/50 transition-colors" title="Acercar">➕</button>
-                                        <button onclick="if(window.mapZoomInstance) window.mapZoomInstance.zoomOut()" class="bg-[#151515] text-soft hover:text-white px-3 py-2 rounded shadow-lg border border-white/10 hover:border-matrix-500/50 transition-colors" title="Alejar">➖</button>
-                                        <button onclick="if(window.mapZoomInstance) { window.mapZoomInstance.resetZoom(); window.mapZoomInstance.center(); }" class="bg-[#151515] text-soft hover:text-white px-3 py-2 rounded shadow-lg border border-white/10 hover:border-matrix-500/50 transition-colors font-bold" title="Centrar">⟲</button>
-                                        <button onclick="descargarMapaSVG()" class="bg-[#151515] text-soft hover:text-matrix-500 px-4 py-2 rounded shadow-lg border border-white/10 hover:border-matrix-500/50 transition-colors text-[9px] font-bold uppercase tracking-widest ml-2" title="Descargar como imagen">↓ SVG</button>
-                                    </div>
-                                </div>` : `<div class="p-8 text-center text-soft/30 border border-white/5 rounded-xl text-xs font-mono uppercase tracking-widest">No hay mapa generado. Pulsa "Regenerar".</div>`}
-                            </div>
-                        </section>
-                    </article>`;
-
-                if(hasMap) {
-                    setTimeout(async () => { 
-                        try { 
-                            await mermaid.run({ querySelector: '.mermaid-canvas' }); 
-                            
-                            const svgEl = document.querySelector('.mermaid-canvas svg');
-                            if(svgEl) {
-                                svgEl.style.width = '100%';
-                                svgEl.style.height = '100%';
-                                svgEl.style.backgroundColor = '#0a0a0a'; 
-                                svgEl.style.color = '#e5e1da'; 
-                                
-                                window.mapZoomInstance = svgPanZoom(svgEl, {
-                                    zoomEnabled: true,
-                                    controlIconsEnabled: false,
-                                    fit: true,
-                                    center: true,
-                                    minZoom: 0.5,
-                                    maxZoom: 5
-                                });
-                            }
-                        } catch (e) { console.warn("Aviso al renderizar mapa:", e); } 
-                    }, 100);
-                }
+                <div class="flex flex-col items-center justify-center min-h-[60vh] px-4">
+                    <div class="text-[#a3a3a3]/20 font-serif italic text-xl md:text-2xl mb-8 text-center">El destilador está vacío...</div>
+                    <button onclick="nuevoManuscrito()" class="w-full md:w-auto bg-matrix-500/10 text-matrix-500 border border-matrix-500/30 px-8 py-4 rounded-xl text-[10px] md:text-[11px] font-bold tracking-[0.2em] uppercase hover:bg-matrix-500 hover:text-black transition-all glow-soft-matrix shadow-lg">
+                        + Crea un nuevo manuscrito
+                    </button>
+                </div>`; 
+                return; 
             }
+
+            const m = parseInt(p.madurez) || 0;
+            let sliderAccentClass = m <= 33 ? 'accent-m-red' : m <= 66 ? 'accent-m-amber' : 'accent-m-green';
+            visor.innerHTML = `
+                <article class="space-y-12">
+                    <header class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-white/5 pb-8">
+                        <div class="space-y-3 flex-1 w-full">
+                            <div id="tituloPrincipalVisor" contenteditable="true" oninput="editarTituloManuscrito(${p.id}, this.innerText)" class="text-[11px] md:text-[10px] font-bold tracking-[0.4em] text-[#e5e1da] uppercase outline-none min-h-[1.2em] transition-colors focus:text-matrix-500">${p.titulo || 'BORRADOR NUEVO'}</div>
+                            <div class="flex items-center gap-4 font-mono text-[11px] text-matrix-500">
+                                <button onclick="isTimerRunning = !isTimerRunning; renderizar();" class="text-lg focus:outline-none transition-transform active:scale-90">${isTimerRunning ? '●' : '○'}</button>
+                                <span id="textoRelojActivo" contenteditable="true" onblur="actualizarTiempoManual(${p.id}, this)" class="outline-none min-w-[50px] cursor-edit">${formatearTiempo(p.tiempo_segundos)}</span>
+                                <span class="opacity-20 text-[#a3a3a3]">|</span>
+                                <span class="text-[#a3a3a3]/60 uppercase tracking-widest text-[9px]"><span id="charCountPrincipal">${p.texto_fusionado.length}</span> caract.</span>
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="descargarPDF(${p.id})" class="text-[9px] font-bold border border-white/10 px-5 py-2 rounded-full hover:bg-white/5 uppercase transition-all">PDF</button>
+                        </div>
+                    </header>
+                    <div id="textoManuscrito" contenteditable="true" oninput="autoGuardar(${p.id}, this.innerText)" style="font-size: ${tamanoFuenteActual}px;" class="font-serif text-[#e5e1da] leading-relaxed outline-none min-h-[300px] whitespace-pre-wrap text-justify">${p.texto_fusionado}</div>
+                    <section class="pt-8 border-t border-white/5">
+                        <div class="flex justify-between items-center mb-6 group cursor-pointer" onclick="toggleElemento('iaBody', 'iaBtn')">
+                            <p class="text-[10px] font-bold tracking-widest text-[#a3a3a3]/40 uppercase">Análisis Objetivo</p>
+                            <span id="iaBtn" class="text-[#a3a3a3] text-xl">−</span>
+                        </div>
+                        <div id="iaBody" class="collapsible-content space-y-6">
+                            <div class="flex gap-4 items-center p-4 bg-white/[0.02] rounded-xl border border-white/5">
+                                <input type="text" id="inputProfundizar-${p.id}" class="flex-1 bg-transparent border-b border-white/10 p-2 text-sm outline-none focus:border-matrix-500 transition-all" placeholder="Consulta a la IA sobre este texto...">
+                                <button onclick="IA_Consulta(${p.id})" id="btnIA-${p.id}" class="bg-white/5 px-6 py-2 text-[9px] font-bold uppercase tracking-widest border border-white/10 rounded-lg hover:bg-white/10">Consultar</button>
+                            </div>
+                            <div class="space-y-4">
+                                ${(p.dialogos || []).map(d => `<div class="p-5 bg-[#151515] border border-white/10 rounded-xl"><p class="text-[10px] text-matrix-500 font-bold mb-3 uppercase">${d.pregunta}</p><p class="text-sm font-serif text-[#e5e1da] leading-relaxed text-justify whitespace-pre-wrap">${d.respuesta}</p></div>`).join('')}
+                            </div>
+                        </div>
+                    </section>
+                    <footer class="pt-8 border-t border-white/5">
+                        <div class="flex justify-between text-[10px] font-bold uppercase text-[#a3a3a3]/40 mb-6"><span>Grado de Maduración</span><span id="madurez-text-${p.id}">${m}%</span></div>
+                        <input type="range" id="slider-${p.id}" min="0" max="100" value="${m}" class="w-full cursor-pointer transition-colors duration-300 ${sliderAccentClass}" oninput="actualizarMadurez(${p.id}, this.value)">
+                    </footer>
+                    <section class="pt-8 border-t border-white/5">
+                        <div class="flex justify-between items-center mb-6 group cursor-pointer" onclick="toggleElemento('mapaBody', 'mapaBtn')">
+                            <div class="flex items-center gap-4">
+                                <p class="text-[10px] font-bold text-[#a3a3a3]/40 uppercase tracking-widest">Estructura Relacional</p>
+                                <button onclick="event.stopPropagation(); IA_Mapa(${p.id})" id="btnMap-${p.id}" class="text-[8px] text-matrix-500 border border-matrix-500/20 px-3 py-1 rounded bg-matrix-500/5 hover:bg-matrix-500 hover:text-black transition-all">↻ REGENERAR</button>
+                            </div>
+                            <span id="mapaBtn" class="text-[#a3a3a3] text-xl">−</span>
+                        </div>
+                        <div id="mapaBody" class="collapsible-content">
+                            <div id="mapaContainer" class="bg-[#0a0a0a] rounded-2xl h-[400px] border border-white/5 relative group overflow-hidden flex items-center justify-center mt-2">
+                                <div class="mermaid-canvas w-full h-full flex items-center justify-center">${p.mapa_mermaid || ""}</div>
+                                <div id="mapaControls" class="absolute bottom-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-auto">
+                                    <button onclick="if(window.mapZoomInstance) window.mapZoomInstance.zoomIn()" class="bg-[#151515] text-white/60 p-3 rounded-lg border border-white/10 hover:bg-white/10 hover:text-white transition-colors">➕</button>
+                                    <button onclick="if(window.mapZoomInstance) window.mapZoomInstance.zoomOut()" class="bg-[#151515] text-white/60 p-3 rounded-lg border border-white/10 hover:bg-white/10 hover:text-white transition-colors">➖</button>
+                                    <button onclick="if(window.mapZoomInstance) { window.mapZoomInstance.resize(); window.mapZoomInstance.fit(); window.mapZoomInstance.center(); }" class="bg-[#151515] text-white/60 p-3 rounded-lg border border-white/10 hover:bg-white/10 hover:text-white transition-colors">⟲</button>
+                                    <button onclick="descargarSVG()" class="bg-[#151515] text-white/60 px-5 py-3 rounded-lg border border-white/10 hover:bg-white/10 hover:text-matrix-500 text-[10px] font-bold uppercase transition-colors">↓ SVG</button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </article>`;
+
+            if(p.mapa_mermaid) setTimeout(async () => {
+                try { 
+                    await mermaid.run({ querySelector: '.mermaid-canvas' });
+                    const svg = document.querySelector('.mermaid-canvas svg');
+                    if(svg) { 
+                        svg.removeAttribute('width'); svg.removeAttribute('height'); svg.removeAttribute('style'); svg.style.width = "100%"; svg.style.height = "100%"; svg.style.maxWidth = "none";
+                        window.mapZoomInstance = svgPanZoom(svg, { zoomEnabled: true, panEnabled: true, controlIconsEnabled: false, fit: true, center: true, minZoom: 0.1, maxZoom: 10 }); 
+                        setTimeout(() => { window.mapZoomInstance.resize(); window.mapZoomInstance.fit(); window.mapZoomInstance.center(); }, 50);
+                        const container = document.getElementById('mapaContainer');
+                        const controls = document.getElementById('mapaControls');
+                        let timeout;
+                        function showControls() { clearTimeout(timeout); controls.classList.add('opacity-100'); timeout = setTimeout(() => controls.classList.remove('opacity-100'), 3500); }
+                        container.addEventListener('touchstart', showControls, {passive: true}); container.addEventListener('mouseenter', showControls, {passive: true}); container.addEventListener('mousemove', showControls, {passive: true});
+                    }
+                } catch(e){}
+            }, 100);
         }
 
-        function seleccionarPensamiento(id) { 
-            pensamientoActivoId = id; 
-            renderizar(); 
-            if(window.innerWidth < 768) toggleSidebarMobile(); 
-        }
-        
-        function toggleTimer() { isTimerRunning = !isTimerRunning; renderizar(); }
-        
-        function guardarConfig() { 
-            API_KEY = document.getElementById('apiKeyInput').value.trim(); 
-            localStorage.setItem('artesano_key', API_KEY); 
-            document.getElementById('modalConfig').classList.add('hidden'); 
-        }
-        
-        function exportarDatos() { 
-            const blob = new Blob([JSON.stringify(pensamientos, null, 2)], { type: "application/json" }); 
-            const a = document.createElement('a'); 
-            a.href = URL.createObjectURL(blob); 
-            a.download = `Sembrador_Archive_${new Date().toISOString().split('T')[0]}.json`; 
-            a.click(); 
+        async function IA_Consulta(id) {
+            if (!API_KEY) { document.getElementById('modalConfig').classList.remove('hidden'); return; }
+            const p = pensamientos.find(x => x.id === id);
+            const input = document.getElementById(`inputProfundizar-${id}`);
+            const btn = document.getElementById(`btnIA-${id}`);
+            const text = document.getElementById('textoManuscrito').innerText;
+            if(!input.value.trim()) return;
+            btn.disabled = true; btn.innerText = "...";
+            try {
+                const r = await fetch('https://openrouter.ai/api/v1/chat/completions', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` }, body: JSON.stringify({ model: 'google/gemini-2.0-flash-001', messages: [{role:'system', content:'Analista sobrio y lógico.'}, {role:'user', content:`Texto:\n${text}\n\nPregunta: ${input.value}`}] }) });
+                const d = await r.json();
+                p.dialogos.unshift({ pregunta: input.value, respuesta: d.choices.message.content });
+                safeSet('artesano_data', pensamientos); renderizar();
+            } catch(e){ alert(e); } finally { btn.disabled = false; btn.innerText = "CONSULTAR"; }
         }
 
-        function descargarMD(id) {
-            const p = pensamientos.find(x => x.id == id);
-            if (!p) return;
-            
-            let mdContent = `# ${p.titulo || 'Fragmento'}\n\n`;
-            mdContent += `${p.texto_fusionado}\n\n`;
-            
-            if (p.mapa_mermaid && p.mapa_mermaid.trim() !== "") {
-                mdContent += `## Mapa Conceptual\n\`\`\`mermaid\n${p.mapa_mermaid}\n\`\`\`\n\n`;
-            }
-            
-            if (p.dialogos && p.dialogos.length > 0) {
-                mdContent += `## Historial de Análisis\n`;
-                p.dialogos.forEach((d, i) => {
-                    mdContent += `### Consulta ${p.dialogos.length - i}\n**Pregunta:** ${d.pregunta}\n\n**Respuesta:** ${d.respuesta}\n\n---\n\n`;
-                });
-            }
-            
-            const blob = new Blob([mdContent], { type: "text/markdown;charset=utf-8" });
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = `${p.titulo || 'Apunte'}.md`;
-            a.click();
+        async function IA_Mapa(id) {
+            if (!API_KEY) { document.getElementById('modalConfig').classList.remove('hidden'); return; }
+            const p = pensamientos.find(x => x.id === id);
+            const text = document.getElementById('textoManuscrito').innerText;
+            try {
+                const r = await fetch('https://openrouter.ai/api/v1/chat/completions', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` }, body: JSON.stringify({ model: 'google/gemini-2.0-flash-001', messages: [{role:'system', content:'Devuelve solo código Mermaid graph TD crudo sin bloques markdown.'}, {role:'user', content:`Texto:\n${text}`}] }) });
+                const d = await r.json();
+                p.mapa_mermaid = d.choices.message.content.replace(/```mermaid/gi, '').replace(/```/g, '').trim();
+                safeSet('artesano_data', pensamientos); renderizar();
+            } catch(e){ alert(e); }
         }
-        
+
         function descargarPDF(id) {
             const p = pensamientos.find(x => x.id == id);
-            const element = document.createElement('div');
-            
-            let sizeElegido = localStorage.getItem('artesano_fuente') || '20';
-            
-            element.innerHTML = `
-                <div style="padding: 20px; font-family: 'Lora', serif; color: #000000; background: #ffffff; line-height: 1.8; text-align: justify; font-size: ${sizeElegido}px;">
-                    <h1 style="text-transform: uppercase; font-size: 14px; border-bottom: 2px solid #000000; padding-bottom: 10px; font-family: 'Inter', sans-serif; letter-spacing: 2px; margin-bottom: 30px; color: #000000;">
-                        ${p.titulo || 'Fragmento'}
-                    </h1>
-                    <div style="white-space: pre-wrap; word-wrap: break-word; color: #000000;">${p.texto_fusionado}</div>
-                </div>`;
-                
-            html2pdf().from(element).set({
-                margin: [15, 15, 15, 15],
-                filename: `${p.titulo || 'Apunte'}.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true, letterRendering: true },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            }).save();
+            const el = document.createElement('div');
+            el.innerHTML = `<div style="width: 700px; padding: 20px; font-family: 'Lora', serif; background: #fff; color: #000; font-size: 16px; line-height: 1.6; box-sizing: border-box; overflow-wrap: break-word; word-wrap: break-word;"><h1 style="font-family: 'Inter', sans-serif; text-transform: uppercase; border-bottom: 2px solid #ddd; padding-bottom: 10px; margin-bottom: 20px; font-size: 14px; letter-spacing: 1px;">${p.titulo}</h1><div style="white-space: pre-wrap; text-align: justify; word-break: break-word;">${p.texto_fusionado}</div></div>`;
+            const opt = { margin: 15, filename: `${p.titulo}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, windowWidth: 800 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
+            html2pdf().set(opt).from(el).save();
         }
 
-        function descargarMapaSVG() {
-            const svgEl = document.querySelector('.mermaid-canvas svg');
-            if (!svgEl) return;
-            
-            const serializer = new XMLSerializer();
-            let source = serializer.serializeToString(svgEl);
-            
-            if(!source.match(/^<svg[^>]+xmlns="http\:\/\/www\.w3\.org\/2000\/svg"/)){
-                source = source.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
-            }
-            if(!source.match(/^<svg[^>]+"http\:\/\/www\.w3\.org\/1999\/xlink"/)){
-                source = source.replace(/^<svg/, '<svg xmlns:xlink="http://www.w3.org/1999/xlink"');
-            }
-            
-            source = '<?xml version="1.0" standalone="no"?>\r\n' + source;
-            const url = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(source);
-            
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = "Mapa_Sembrador.svg";
-            a.click();
+        function descargarSVG() {
+            const svg = document.querySelector('.mermaid-canvas svg');
+            if(!svg) return;
+            const clone = svg.cloneNode(true);
+            clone.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+            clone.style.backgroundColor = "#0a0a0a";
+            const blob = new Blob([`<?xml version="1.0" standalone="no"?>\r\n${new XMLSerializer().serializeToString(clone)}`], {type:"image/svg+xml"});
+            const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "Mapa.svg"; a.click();
         }
 
-        function toggleMapCheck() {
-            const checkIA = document.getElementById('checkIA').checked;
-            document.getElementById('checkMapa').disabled = !checkIA;
-            document.getElementById('lblMapa').style.opacity = checkIA ? '1' : '0.3';
-            if(!checkIA) document.getElementById('checkMapa').checked = false;
-        }
+        function toggleSidebarMobile() { document.getElementById('sidebar').classList.toggle('mobile-sidebar-open'); document.getElementById('sidebarOverlay').classList.toggle('hidden'); document.getElementById('sidebar').classList.toggle('-translate-x-full'); }
+        function toggleSidebarDesktop() { document.body.classList.toggle('desktop-sidebar-collapsed'); }
+        function toggleElemento(t, b) { const el = document.getElementById(t); el.classList.toggle('is-collapsed'); document.getElementById(b).innerText = el.classList.contains('is-collapsed') ? "+" : "−"; }
+        function cambiarFiltro(f) { filtroActual = f; renderizarLateral(); }
+        function guardarConfig() { API_KEY = document.getElementById('apiKeyInput').value; safeSet('artesano_key', API_KEY); document.getElementById('modalConfig').classList.add('hidden'); }
+        function exportarDatos() { const blob = new Blob([JSON.stringify(pensamientos, null, 2)], {type:"application/json"}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `Sembrador_Backup.json`; a.click(); }
 
-        document.getElementById('nuevoApunte').addEventListener('input', function() {
-            document.getElementById('charCount').textContent = this.value.length;
-        });
-function intercambiarTextos() {
-    const input = document.getElementById('nuevoApunte');
-    if (!pensamientoActivoId) return;
-
-    // Buscamos el pensamiento actual en la lista
-    const idx = pensamientos.findIndex(p => p.id === pensamientoActivoId);
-    if (idx === -1) return;
-
-    // Guardamos los contenidos para el cambio
-    const textoRegistroIA = pensamientos[idx].texto_fusionado;
-    const textoTuyoInput = input.value;
-
-    // --- EL INTERCAMBIO ---
-    // Lo que escribiste tú va al registro principal
-    pensamientos[idx].texto_fusionado = textoTuyoInput;
-    
-    // Lo que generó la IA baja al recuadro para que lo edites
-    input.value = textoRegistroIA;
-
-    // Actualizamos el contador de letras del recuadro
-    document.getElementById('charCount').textContent = input.value.length;
-
-    // Guardamos en la memoria y redibujamos la pantalla
-    localStorage.setItem('artesano_data', JSON.stringify(pensamientos));
-    renderizar();
-    
-    // Un pequeño toque visual para confirmar el cambio
-    input.classList.add('bg-matrix-500/10');
-    setTimeout(() => input.classList.remove('bg-matrix-500/10'), 200);
-}
-        
+        window.onload = () => { if(pensamientos.length===0) { renderizar(); } else { pensamientoActivoId = pensamientos.id; renderizar(); } document.getElementById('apiKeyInput').value = API_KEY; };
     </script>
 </body>
 </html>
