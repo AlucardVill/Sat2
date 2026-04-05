@@ -41,6 +41,10 @@
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 10px; }
         
+        /* Ocultar el marcador por defecto del summary en los acordeones */
+        summary { list-style: none; }
+        summary::-webkit-details-marker { display: none; }
+        
         .collapsible-content { max-height: 2000px; overflow: hidden; transition: max-height 0.5s cubic-bezier(0, 1, 0, 1); }
         .collapsible-content.is-collapsed { max-height: 0; }
         .progress-container { width: 100%; height: 4px; background: #0a0a0a; border-radius: 10px; position: relative; }
@@ -128,24 +132,20 @@
             setTimeout(() => document.getElementById('textoManuscrito')?.focus(), 100);
         }
 
-        // --- FUNCIÓN MEJORADA PARA EDITAR TÍTULO DESDE CUALQUIER LADO ---
         function editarTituloManuscrito(id, nuevo, desdeLateral = false) {
             const p = pensamientos.find(x => x.id === id);
             if(p) {
-                // Limpiamos saltos de línea y pasamos a mayúsculas
                 p.titulo = nuevo.replace(/[\n\r]/g, '').toUpperCase() || "BORRADOR NUEVO";
                 p.titulo_manual = (nuevo.trim() !== "");
                 safeSet('artesano_data', pensamientos);
                 
                 if (desdeLateral) {
-                    // Si se editó en el lateral, actualizamos el título en el visor principal si es el activo
                     if (id === pensamientoActivoId) {
                         const titEl = document.getElementById('tituloPrincipalVisor');
                         if (titEl) titEl.innerText = p.titulo;
                     }
                     renderizarLateral();
                 } else {
-                    // Si se editó en el visor, solo actualizamos el lateral
                     renderizarLateral();
                 }
             }
@@ -229,8 +229,6 @@
                 const item = document.createElement('div');
                 item.className = `p-6 mb-2 cursor-pointer transition-all border-l-2 ${isActivo ? 'border-matrix-500 bg-white/[0.04]' : 'border-transparent hover:bg-white/[0.02]'}`;
                 item.onclick = () => { pensamientoActivoId = p.id; renderizar(); if(window.innerWidth < 768) toggleSidebarMobile(); };
-                
-                // --- TÍTULO EDITABLE EN EL PANEL LATERAL ---
                 item.innerHTML = `
                     <div class="flex justify-between items-start mb-3 group/item">
                         <div contenteditable="true" 
@@ -298,10 +296,21 @@
                         <div id="iaBody" class="collapsible-content space-y-6">
                             <div class="flex gap-4 items-center p-4 bg-white/[0.02] rounded-xl border border-white/5">
                                 <input type="text" id="inputProfundizar-${p.id}" class="flex-1 bg-transparent border-b border-white/10 p-2 text-sm outline-none focus:border-matrix-500 transition-all" placeholder="Consulta a la IA sobre este texto...">
-                                <button onclick="IA_Consulta(${p.id})" id="btnIA-${p.id}" class="bg-white/5 px-6 py-2 text-[9px] font-bold uppercase tracking-widest border border-white/10 rounded-lg hover:bg-white/10">Consultar</button>
+                                <button onclick="IA_Consulta(${p.id})" id="btnIA-${p.id}" class="bg-white/5 px-6 py-2 text-[9px] font-bold uppercase tracking-widest border border-white/10 rounded-lg hover:bg-white/10 flex-shrink-0">Consultar</button>
                             </div>
-                            <div class="space-y-4">
-                                ${(p.dialogos || []).map(d => `<div class="p-5 bg-[#151515] border border-white/10 rounded-xl"><p class="text-[10px] text-matrix-500 font-bold mb-3 uppercase">${d.pregunta}</p><p class="text-sm font-serif text-[#e5e1da] leading-relaxed text-justify whitespace-pre-wrap">${d.respuesta}</p></div>`).join('')}
+                            
+                            <div class="space-y-4 max-h-[45vh] overflow-y-auto pr-2">
+                                ${(p.dialogos || []).map((d, index) => `
+                                    <details class="group bg-[#151515] border border-white/10 rounded-xl overflow-hidden" ${index === 0 ? 'open' : ''}>
+                                        <summary class="p-5 cursor-pointer flex justify-between items-center outline-none">
+                                            <p class="text-[10px] text-matrix-500 font-bold uppercase pr-4 line-clamp-2">${d.pregunta}</p>
+                                            <span class="text-[#a3a3a3] text-xs transition-transform duration-300 group-open:rotate-180">▼</span>
+                                        </summary>
+                                        <div class="p-5 pt-0">
+                                            <div class="border-t border-white/5 pt-4 text-sm font-serif text-[#e5e1da] leading-relaxed text-justify whitespace-pre-wrap">${d.respuesta}</div>
+                                        </div>
+                                    </details>
+                                `).join('')}
                             </div>
                         </div>
                     </section>
