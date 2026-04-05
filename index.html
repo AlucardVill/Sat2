@@ -99,13 +99,17 @@
     </main>
 
     <div id="modalConfig" class="hidden fixed inset-0 bg-black/90 z- flex justify-center items-center p-4 backdrop-blur-sm">
-        <div class="bg-[#0f0f0f] border border-white/10 p-8 md:p-12 max-w-sm w-full space-y-8 rounded-2xl">
+        <div class="bg-[#0f0f0f] border border-white/10 p-8 md:p-12 max-w-sm w-full space-y-6 rounded-2xl">
             <h2 class="text-[10px] font-bold tracking-[0.4em] uppercase text-[#e5e1da] border-b border-white/5 pb-4">Configuración</h2>
             <div class="space-y-2">
                 <label class="text-[9px] text-[#a3a3a3] uppercase tracking-widest">API Key (OpenRouter)</label>
                 <input type="password" id="apiKeyInput" class="w-full bg-[#0a0a0a] border border-white/10 p-4 text-xs text-white outline-none rounded-lg focus:border-matrix-500/50" placeholder="sk-or-v1-...">
             </div>
-            <div class="flex gap-4">
+            <div class="space-y-2">
+                <label class="text-[9px] text-[#a3a3a3] uppercase tracking-widest">Modelo IA</label>
+                <input type="text" id="apiModelInput" class="w-full bg-[#0a0a0a] border border-white/10 p-4 text-xs text-white outline-none rounded-lg focus:border-matrix-500/50" placeholder="google/gemini-2.0-flash-001">
+            </div>
+            <div class="flex gap-4 pt-4">
                 <button onclick="guardarConfig()" class="flex-1 bg-[#e5e1da] text-black py-4 text-[10px] font-bold uppercase tracking-widest rounded-lg hover:bg-white transition-colors">Guardar</button>
                 <button onclick="document.getElementById('modalConfig').classList.add('hidden')" class="flex-1 text-[#a3a3a3] bg-white/5 py-4 text-[10px] font-bold uppercase tracking-widest rounded-lg hover:bg-white/10 transition-colors">Cerrar</button>
             </div>
@@ -117,6 +121,7 @@
         function safeGet(k, d) { try { const i = localStorage.getItem(k); return i ? JSON.parse(i) : d; } catch(e){ return d; } }
 
         let API_KEY = safeGet('artesano_key', "");
+        let API_MODEL = safeGet('artesano_model', "google/gemini-2.0-flash-001");
         let pensamientos = safeGet('artesano_data', []);
         let pensamientoActivoId = null; 
         let isTimerRunning = false;
@@ -200,7 +205,6 @@
             }
         }
 
-        // --- NUEVA FUNCIÓN PARA ELIMINAR CONSULTAS DE IA ---
         function eliminarDialogo(idManuscrito, indexDialogo) {
             if(confirm('¿Eliminar esta consulta del análisis?')) {
                 const p = pensamientos.find(x => x.id === idManuscrito);
@@ -386,7 +390,7 @@
             try {
                 const r = await fetch('https://openrouter.ai/api/v1/chat/completions', { 
                     method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` }, 
-                    body: JSON.stringify({ model: 'google/gemini-2.0-flash-001', messages: [{role:'system', content:'Analista sobrio y lógico.'}, {role:'user', content:`Texto:\n${text}\n\nPregunta: ${input.value}`}] }) 
+                    body: JSON.stringify({ model: API_MODEL, messages: [{role:'system', content:'Analista sobrio y lógico.'}, {role:'user', content:`Texto:\n${text}\n\nPregunta: ${input.value}`}] }) 
                 });
                 const d = await r.json();
                 
@@ -411,7 +415,7 @@
             try {
                 const r = await fetch('https://openrouter.ai/api/v1/chat/completions', { 
                     method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` }, 
-                    body: JSON.stringify({ model: 'google/gemini-2.0-flash-001', messages: [{role:'system', content:'Devuelve solo código Mermaid graph TD crudo sin bloques markdown.'}, {role:'user', content:`Texto:\n${text}`}] }) 
+                    body: JSON.stringify({ model: API_MODEL, messages: [{role:'system', content:'Devuelve solo código Mermaid graph TD crudo sin bloques markdown.'}, {role:'user', content:`Texto:\n${text}`}] }) 
                 });
                 const d = await r.json();
                 
@@ -449,10 +453,20 @@
         function toggleSidebarDesktop() { document.body.classList.toggle('desktop-sidebar-collapsed'); }
         function toggleElemento(t, b) { const el = document.getElementById(t); el.classList.toggle('is-collapsed'); document.getElementById(b).innerText = el.classList.contains('is-collapsed') ? "+" : "−"; }
         function cambiarFiltro(f) { filtroActual = f; renderizarLateral(); }
-        function guardarConfig() { API_KEY = document.getElementById('apiKeyInput').value; safeSet('artesano_key', API_KEY); document.getElementById('modalConfig').classList.add('hidden'); }
+        function guardarConfig() { 
+            API_KEY = document.getElementById('apiKeyInput').value; 
+            API_MODEL = document.getElementById('apiModelInput').value || "google/gemini-2.0-flash-001";
+            safeSet('artesano_key', API_KEY); 
+            safeSet('artesano_model', API_MODEL);
+            document.getElementById('modalConfig').classList.add('hidden'); 
+        }
         function exportarDatos() { const blob = new Blob([JSON.stringify(pensamientos, null, 2)], {type:"application/json"}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `Sembrador_Backup.json`; a.click(); }
 
-        window.onload = () => { if(pensamientos.length===0) { renderizar(); } else { pensamientoActivoId = pensamientos.id; renderizar(); } document.getElementById('apiKeyInput').value = API_KEY; };
+        window.onload = () => { 
+            if(pensamientos.length===0) { renderizar(); } else { pensamientoActivoId = pensamientos.id; renderizar(); } 
+            document.getElementById('apiKeyInput').value = API_KEY; 
+            document.getElementById('apiModelInput').value = API_MODEL;
+        };
     </script>
 </body>
 </html>
