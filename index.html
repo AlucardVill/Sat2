@@ -21,21 +21,18 @@
                         softdark: '#121212',
                         paper: '#e5e1da',
                         matrix: { 400: '#00C833', 500: '#00FF41' },
-                        /* Nueva Paleta de Maduración Refinada */
-                        'm-red': '#f43f5e',   /* Rosa Coral (En bruto) */
-                        'm-amber': '#f59e0b', /* Ámbar (Incubando) */
-                        'm-green': '#10b981'  /* Verde Esmeralda (Destilada) */
+                        'm-red': '#f43f5e',   
+                        'm-amber': '#f59e0b', 
+                        'm-green': '#10b981'  
                     }
                 } 
             } 
         }
-        /* Mapa configurado con el nuevo verde esmeralda */
         mermaid.initialize({ startOnLoad: false, theme: 'base', themeVariables: { darkMode: true, background: '#0a0a0a', primaryColor: '#151515', primaryTextColor: '#e5e1da', primaryBorderColor: '#10b981', lineColor: '#a3a3a3' }, flowchart: { curve: 'basis' }, securityLevel: 'loose' });
     </script>
     <style>
         body { background-color: #121212; color: #d1d1d1; transition: background-color 0.5s ease; overflow-x: hidden; }
         
-        /* Nuevos brillos ajustados a la paleta */
         .glow-red { box-shadow: 0 0 15px rgba(244, 63, 94, 0.3); }
         .glow-amber { box-shadow: 0 0 15px rgba(245, 158, 11, 0.3); }
         .glow-green { box-shadow: 0 0 15px rgba(16, 185, 129, 0.3); }
@@ -131,13 +128,26 @@
             setTimeout(() => document.getElementById('textoManuscrito')?.focus(), 100);
         }
 
-        function editarTituloManuscrito(id, nuevo) {
+        // --- FUNCIÓN MEJORADA PARA EDITAR TÍTULO DESDE CUALQUIER LADO ---
+        function editarTituloManuscrito(id, nuevo, desdeLateral = false) {
             const p = pensamientos.find(x => x.id === id);
             if(p) {
-                p.titulo = nuevo.toUpperCase() || "BORRADOR NUEVO";
+                // Limpiamos saltos de línea y pasamos a mayúsculas
+                p.titulo = nuevo.replace(/[\n\r]/g, '').toUpperCase() || "BORRADOR NUEVO";
                 p.titulo_manual = (nuevo.trim() !== "");
                 safeSet('artesano_data', pensamientos);
-                renderizarLateral();
+                
+                if (desdeLateral) {
+                    // Si se editó en el lateral, actualizamos el título en el visor principal si es el activo
+                    if (id === pensamientoActivoId) {
+                        const titEl = document.getElementById('tituloPrincipalVisor');
+                        if (titEl) titEl.innerText = p.titulo;
+                    }
+                    renderizarLateral();
+                } else {
+                    // Si se editó en el visor, solo actualizamos el lateral
+                    renderizarLateral();
+                }
             }
         }
 
@@ -219,9 +229,17 @@
                 const item = document.createElement('div');
                 item.className = `p-6 mb-2 cursor-pointer transition-all border-l-2 ${isActivo ? 'border-matrix-500 bg-white/[0.04]' : 'border-transparent hover:bg-white/[0.02]'}`;
                 item.onclick = () => { pensamientoActivoId = p.id; renderizar(); if(window.innerWidth < 768) toggleSidebarMobile(); };
+                
+                // --- TÍTULO EDITABLE EN EL PANEL LATERAL ---
                 item.innerHTML = `
                     <div class="flex justify-between items-start mb-3 group/item">
-                        <div class="text-[10px] font-bold uppercase tracking-[0.15em] ${isActivo ? 'text-[#e5e1da]' : 'text-[#a3a3a3]/60'} flex-1 pr-4 line-clamp-1">${p.titulo || 'BORRADOR NUEVO'}</div>
+                        <div contenteditable="true" 
+                             onclick="event.stopPropagation()" 
+                             onkeydown="if(event.key==='Enter'){event.preventDefault(); this.blur();}"
+                             onblur="editarTituloManuscrito(${p.id}, this.innerText, true)"
+                             class="text-[10px] font-bold uppercase tracking-[0.15em] ${isActivo ? 'text-[#e5e1da]' : 'text-[#a3a3a3]/60'} outline-none flex-1 pr-4 whitespace-nowrap overflow-hidden text-ellipsis cursor-text hover:text-white transition-colors">
+                             ${p.titulo || 'BORRADOR NUEVO'}
+                        </div>
                         <button onclick="event.stopPropagation(); if(confirm('¿Eliminar?')){pensamientos=pensamientos.filter(x=>x.id!==${p.id}); safeSet('artesano_data',pensamientos); renderizar();}" class="text-soft/20 hover:text-coral-500 transition-colors">×</button>
                     </div>
                     <div class="font-serif text-[12px] italic text-[#a3a3a3]/40 line-clamp-2 mb-4 leading-relaxed">${p.texto_fusionado || "Sin contenido..."}</div>
@@ -257,7 +275,7 @@
                 <article class="space-y-12">
                     <header class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-white/5 pb-8">
                         <div class="space-y-3 flex-1 w-full">
-                            <div id="tituloPrincipalVisor" contenteditable="true" oninput="editarTituloManuscrito(${p.id}, this.innerText)" class="text-[11px] md:text-[10px] font-bold tracking-[0.4em] text-[#e5e1da] uppercase outline-none min-h-[1.2em] transition-colors focus:text-matrix-500">${p.titulo || 'BORRADOR NUEVO'}</div>
+                            <div id="tituloPrincipalVisor" contenteditable="true" onkeydown="if(event.key==='Enter'){event.preventDefault(); this.blur();}" oninput="editarTituloManuscrito(${p.id}, this.innerText, false)" class="text-[11px] md:text-[10px] font-bold tracking-[0.4em] text-[#e5e1da] uppercase outline-none min-h-[1.2em] transition-colors focus:text-matrix-500">${p.titulo || 'BORRADOR NUEVO'}</div>
                             <div class="flex items-center gap-4 font-mono text-[11px] text-matrix-500">
                                 <button onclick="isTimerRunning = !isTimerRunning; renderizar();" class="text-lg focus:outline-none transition-transform active:scale-90">${isTimerRunning ? '●' : '○'}</button>
                                 <span id="textoRelojActivo" contenteditable="true" onblur="actualizarTiempoManual(${p.id}, this)" class="outline-none min-w-[50px] cursor-edit">${formatearTiempo(p.tiempo_segundos)}</span>
@@ -269,7 +287,9 @@
                             <button onclick="descargarPDF(${p.id})" class="text-[9px] font-bold border border-white/10 px-5 py-2 rounded-full hover:bg-white/5 uppercase transition-all">PDF</button>
                         </div>
                     </header>
-                    <div id="textoManuscrito" contenteditable="true" oninput="autoGuardar(${p.id}, this.innerText)" style="font-size: ${tamanoFuenteActual}px;" class="font-serif text-[#e5e1da] leading-relaxed outline-none min-h-[300px] whitespace-pre-wrap text-justify">${p.texto_fusionado}</div>
+                    
+                    <div id="textoManuscrito" contenteditable="true" oninput="autoGuardar(${p.id}, this.innerText)" style="font-size: ${tamanoFuenteActual}px;" class="font-serif text-[#e5e1da] leading-relaxed outline-none min-h-[300px] max-h-[55vh] overflow-y-auto pr-4 whitespace-pre-wrap text-justify">${p.texto_fusionado}</div>
+                    
                     <section class="pt-8 border-t border-white/5">
                         <div class="flex justify-between items-center mb-6 group cursor-pointer" onclick="toggleElemento('iaBody', 'iaBtn')">
                             <p class="text-[10px] font-bold tracking-widest text-[#a3a3a3]/40 uppercase">Análisis Objetivo</p>
@@ -338,23 +358,47 @@
             if(!input.value.trim()) return;
             btn.disabled = true; btn.innerText = "...";
             try {
-                const r = await fetch('https://openrouter.ai/api/v1/chat/completions', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` }, body: JSON.stringify({ model: 'google/gemini-2.0-flash-001', messages: [{role:'system', content:'Analista sobrio y lógico.'}, {role:'user', content:`Texto:\n${text}\n\nPregunta: ${input.value}`}] }) });
+                const r = await fetch('https://openrouter.ai/api/v1/chat/completions', { 
+                    method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` }, 
+                    body: JSON.stringify({ model: 'google/gemini-2.0-flash-001', messages: [{role:'system', content:'Analista sobrio y lógico.'}, {role:'user', content:`Texto:\n${text}\n\nPregunta: ${input.value}`}] }) 
+                });
                 const d = await r.json();
+                
+                if (d.error) throw new Error(d.error.message || JSON.stringify(d.error));
+                if (!d.choices || !d.choices) throw new Error("La IA no devolvió una respuesta válida.");
+                
                 p.dialogos.unshift({ pregunta: input.value, respuesta: d.choices.message.content });
                 safeSet('artesano_data', pensamientos); renderizar();
-            } catch(e){ alert(e); } finally { btn.disabled = false; btn.innerText = "CONSULTAR"; }
+            } catch(e){ 
+                alert("Error de API: " + e.message); 
+            } finally { 
+                btn.disabled = false; btn.innerText = "CONSULTAR"; 
+            }
         }
 
         async function IA_Mapa(id) {
             if (!API_KEY) { document.getElementById('modalConfig').classList.remove('hidden'); return; }
             const p = pensamientos.find(x => x.id === id);
+            const btn = document.getElementById(`btnMap-${id}`);
             const text = document.getElementById('textoManuscrito').innerText;
+            if (btn) btn.innerText = "...";
             try {
-                const r = await fetch('https://openrouter.ai/api/v1/chat/completions', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` }, body: JSON.stringify({ model: 'google/gemini-2.0-flash-001', messages: [{role:'system', content:'Devuelve solo código Mermaid graph TD crudo sin bloques markdown.'}, {role:'user', content:`Texto:\n${text}`}] }) });
+                const r = await fetch('https://openrouter.ai/api/v1/chat/completions', { 
+                    method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` }, 
+                    body: JSON.stringify({ model: 'google/gemini-2.0-flash-001', messages: [{role:'system', content:'Devuelve solo código Mermaid graph TD crudo sin bloques markdown.'}, {role:'user', content:`Texto:\n${text}`}] }) 
+                });
                 const d = await r.json();
+                
+                if (d.error) throw new Error(d.error.message || JSON.stringify(d.error));
+                if (!d.choices || !d.choices) throw new Error("La IA no devolvió una respuesta válida.");
+                
                 p.mapa_mermaid = d.choices.message.content.replace(/```mermaid/gi, '').replace(/```/g, '').trim();
                 safeSet('artesano_data', pensamientos); renderizar();
-            } catch(e){ alert(e); }
+            } catch(e){ 
+                alert("Error de API: " + e.message); 
+            } finally {
+                if (btn) btn.innerText = "↻ REGENERAR";
+            }
         }
 
         function descargarPDF(id) {
